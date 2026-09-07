@@ -84,9 +84,9 @@ function applyConfig() {
     const bookingClosedDiv = document.getElementById('bookingClosedMessage');
     
     // Check Status from the active event rather than global settings
-    const isBookingOpen = window.activeEvent && window.activeEvent.status === 'Open';
+    const isBookingOpen = window.activeEvent && String(window.activeEvent.status || '').trim().toLowerCase() === 'open';
     
-    if (isBookingOpen || isAdmin) {
+    if (isBookingOpen) {
         if (bookingFormWrapper) bookingFormWrapper.classList.remove('hidden');
         if (bookingClosedDiv) bookingClosedDiv.classList.add('hidden');
     } else {
@@ -210,7 +210,8 @@ function switchTab(tab) {
     document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.remove('ring-4', 'ring-yellow-400'));
     document.getElementById('tab-' + tab).classList.add('ring-4', 'ring-yellow-400');
     
-    if (tab === 'summary') updateSummaryTab();
+    if (tab === 'booking') applyConfig();
+    else if (tab === 'summary') updateSummaryTab();
     else if (tab === 'payment') { 
         updatePaymentTable(); 
         const searchInput = document.getElementById('paymentSearchInput');
@@ -385,7 +386,8 @@ function selectColor(color) {
 let isPhoneVerified = false;  // Track if phone has been verified
 
 async function previewBooking() {
-    if ((!window.activeEvent || window.activeEvent.status !== 'Open') && !isAdmin) {
+    const isBookingOpen = window.activeEvent && String(window.activeEvent.status || '').trim().toLowerCase() === 'open';
+    if (!isBookingOpen) {
         showBookingClosedModal();
         return;
     }
@@ -494,6 +496,13 @@ function closePreview() {
 }
 
 async function confirmBooking() {
+    const isBookingOpen = window.activeEvent && String(window.activeEvent.status || '').trim().toLowerCase() === 'open';
+    if (!isBookingOpen) {
+        showToast('ไม่สามารถจองได้ เนื่องจากกิจกรรมนี้ปิดรับจองแล้ว', 'error');
+        closePreview();
+        return;
+    }
+
     const confirmBtn = document.getElementById('confirmBtn');
     if (confirmBtn.disabled) return;
     
