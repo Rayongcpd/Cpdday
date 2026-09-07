@@ -1458,27 +1458,52 @@ async function generateCoopPDF(coopId) {
 
     const container = document.createElement('div');
     container.innerHTML = pdfContent;
-    container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
+    container.style.cssText = 'position: fixed; top: 0; left: 0; width: 750px; z-index: -9999; background: #ffffff; opacity: 1; pointer-events: none;';
     document.body.appendChild(container);
 
     const loadingMsg = document.createElement('div');
-    loadingMsg.innerHTML = '⏳ กำลังประมวลผล PDF...';
-    loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px 40px;border-radius:10px;z-index:99999;';
+    loadingMsg.innerHTML = `
+        <div style="background: rgba(15, 23, 42, 0.9); color: white; padding: 24px 36px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); text-align: center; font-family: 'Kanit', sans-serif;">
+            <div style="font-size: 32px; margin-bottom: 8px;">⏳</div>
+            <div style="font-size: 16px; font-weight: 600;">กำลังประมวลผล PDF...</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">กรุณารอสักครู่</div>
+        </div>`;
+    loadingMsg.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 99999;';
     document.body.appendChild(loadingMsg);
 
     const opt = {
         margin: [10, 10, 10, 10],
         filename: `เอกสารจอง_${booking.coop_name.replace(/\s+/g, '_')}_${booking.id}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: 1000
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
+    if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+    }
+
     setTimeout(() => {
-        html2pdf().set(opt).from(container.firstElementChild).save()
-            .then(() => { document.body.removeChild(container); document.body.removeChild(loadingMsg); showToast('ออกรายงานสำเร็จ!', 'success'); })
-            .catch(err => { console.error(err); document.body.removeChild(container); document.body.removeChild(loadingMsg); showToast('ผิดพลาด', 'error'); });
-    }, 500);
+        const targetEl = container.querySelector('#pdf-content') || container.firstElementChild || container;
+        html2pdf().set(opt).from(targetEl).save()
+            .then(() => {
+                if (document.body.contains(container)) document.body.removeChild(container);
+                if (document.body.contains(loadingMsg)) document.body.removeChild(loadingMsg);
+                showToast('ออกรายงานสำเร็จ!', 'success');
+            })
+            .catch(err => {
+                console.error(err);
+                if (document.body.contains(container)) document.body.removeChild(container);
+                if (document.body.contains(loadingMsg)) document.body.removeChild(loadingMsg);
+                showToast('เกิดข้อผิดพลาดในการสร้าง PDF', 'error');
+            });
+    }, 400);
 
 }
 
@@ -1502,7 +1527,7 @@ function generateItemRowPDF(option, count, unitPrice) {
 /**
  * Generate PDF Summary for All Activities - Admin Master Copy
  */
-function generateDetailedSummaryPDF(filterType = 'all') {
+async function generateDetailedSummaryPDF(filterType = 'all') {
     let filtered = allBookings;
     let label = '📊 รายงานสรุปยอดทั้งหมด';
     let color = '#4f46e5';
@@ -1617,36 +1642,52 @@ function generateDetailedSummaryPDF(filterType = 'all') {
 
     const container = document.createElement('div');
     container.innerHTML = pdfContent;
-    container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
+    container.style.cssText = 'position: fixed; top: 0; left: 0; width: 750px; z-index: -9999; background: #ffffff; opacity: 1; pointer-events: none;';
     document.body.appendChild(container);
 
     const loadingMsg = document.createElement('div');
-    loadingMsg.innerHTML = '⏳ กำลังเตรียมรายงานสรุป...';
-    loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:25px 50px;border-radius:15px;z-index:99999;';
+    loadingMsg.innerHTML = `
+        <div style="background: rgba(15, 23, 42, 0.9); color: white; padding: 24px 36px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); text-align: center; font-family: 'Kanit', sans-serif;">
+            <div style="font-size: 32px; margin-bottom: 8px;">⏳</div>
+            <div style="font-size: 16px; font-weight: 600;">กำลังเตรียมรายงานสรุป...</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">กรุณารอสักครู่</div>
+        </div>`;
+    loadingMsg.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 99999;';
     document.body.appendChild(loadingMsg);
 
     const opt = {
         margin: [10, 10, 10, 10],
         filename: `สรุปยอดรวม_กิจกรรม_${now.getFullYear()}${now.getMonth()+1}${now.getDate()}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: 1000
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
+    if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+    }
+
     setTimeout(() => {
-        html2pdf().set(opt).from(container.firstElementChild).save()
+        const targetEl = container.firstElementChild || container;
+        html2pdf().set(opt).from(targetEl).save()
             .then(() => {
-                document.body.removeChild(container);
-                document.body.removeChild(loadingMsg);
+                if (document.body.contains(container)) document.body.removeChild(container);
+                if (document.body.contains(loadingMsg)) document.body.removeChild(loadingMsg);
                 showToast('พิมพ์รายงานสรุปสำเร็จ!', 'success');
             })
             .catch(err => {
                 console.error(err);
-                document.body.removeChild(container);
-                document.body.removeChild(loadingMsg);
+                if (document.body.contains(container)) document.body.removeChild(container);
+                if (document.body.contains(loadingMsg)) document.body.removeChild(loadingMsg);
                 showToast('เกิดข้อผิดพลาดในการสร้างรายงาน', 'error');
             });
-    }, 500);
+    }, 400);
 
 }
 
