@@ -7,498 +7,250 @@
     <title>ระบบจัดการงานวันสหกรณ์แห่งชาติ</title>
     <meta name="description" content="ระบบรวบรวมข้อมูลการจองเสื้อ พานพุ่ม และโต๊ะจีน งานวันสหกรณ์แห่งชาติ">
 
-    <!-- Fonts -->
+    <!-- Google Fonts: Kanit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- html2pdf.js -->
+    <!-- html2pdf.js for exporting PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
-<body class="h-full">
-    <div id="app" class="flex flex-col h-full w-full bg-gradient-to-br from-blue-50 to-purple-50">
+<body class="h-full bg-slate-50 text-slate-800">
+    <div id="app" class="flex flex-col min-h-full w-full">
 
-        <!-- Header -->
-        <header class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 shadow-lg">
-            <h1 id="systemTitle" class="text-2xl md:text-3xl font-bold text-center">ระบบรวบรวมข้อมูลงานวันสหกรณ์แห่งชาติ
-            </h1>
-            <p id="eventName" class="text-center text-sm md:text-base mt-1 opacity-90"></p>
+        <!-- Top Header -->
+        <header class="w-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-md border-b border-indigo-900/40">
+            <div class="max-w-6xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-3.5 text-center md:text-left">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-600/30 border border-indigo-400/30 flex items-center justify-center text-2xl shadow-inner">
+                        👕
+                    </div>
+                    <div>
+                        <h1 id="systemTitle" class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center justify-center md:justify-start gap-2">
+                            ระบบรวบรวมข้อมูลงานวันสหกรณ์แห่งชาติ
+                            <span class="text-xs bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 px-2.5 py-0.5 rounded-full font-normal hidden sm:inline-block">ระยอง</span>
+                        </h1>
+                        <p id="eventName" class="text-xs md:text-sm text-indigo-200/80 mt-0.5 font-light"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-300 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-sm">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>ระบบออนไลน์</span>
+                </div>
+            </div>
         </header>
 
-        <!-- Navigation Tabs -->
-        <nav class="w-full bg-white shadow-md overflow-x-auto">
-            <div class="flex min-w-max">
-                <button onclick="switchTab('booking')" id="tab-booking"
-                    class="flex-1 px-4 py-3 text-sm md:text-base font-medium bg-green-500 text-white hover:bg-green-600 transition-colors">
-                    📝 จองกิจกรรม
-                </button>
-                <button onclick="switchTab('payment')" id="tab-payment"
-                    class="flex-1 px-4 py-3 text-sm md:text-base font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-                    💰 แจ้งชำระเงิน
-                </button>
-                <button onclick="switchTab('status')" id="tab-status"
-                    class="flex-1 px-4 py-3 text-sm md:text-base font-medium bg-indigo-500 text-white hover:bg-indigo-600 transition-colors">
-                    📜 ตรวจสอบสถานะ
-                </button>
-                <button onclick="switchTab('summary')" id="tab-summary"
-                    class="hidden flex-1 px-4 py-3 text-sm md:text-base font-medium bg-purple-500 text-white hover:bg-purple-600 transition-colors">
-                    📊 สรุปข้อมูล
-                </button>
-                <button onclick="switchTab('settings')" id="tab-settings"
-                    class="hidden flex-1 px-4 py-3 text-sm md:text-base font-medium bg-gray-700 text-white hover:bg-gray-800 transition-colors">
-                    ⚙️ ตั้งค่าระบบ
-                </button>
+        <!-- Modern Navigation Bar -->
+        <nav class="nav-container sticky top-0 z-30 shadow-sm">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex items-center gap-1.5 md:gap-2 overflow-x-auto py-2.5 custom-scrollbar">
+                    <button onclick="switchTab('booking')" id="tab-booking" class="nav-tab-btn active">
+                        <span class="text-lg">📝</span>
+                        <span>จองกิจกรรม</span>
+                    </button>
+                    <button onclick="switchTab('payment')" id="tab-payment" class="nav-tab-btn">
+                        <span class="text-lg">💰</span>
+                        <span>แจ้งชำระเงิน</span>
+                    </button>
+                    <button onclick="switchTab('status')" id="tab-status" class="nav-tab-btn">
+                        <span class="text-lg">📜</span>
+                        <span>ตรวจสอบสถานะ</span>
+                    </button>
+                    <button onclick="switchTab('summary')" id="tab-summary" class="nav-tab-btn hidden">
+                        <span class="text-lg">📊</span>
+                        <span>สรุปข้อมูล (Admin)</span>
+                    </button>
+                    <button onclick="switchTab('settings')" id="tab-settings" class="nav-tab-btn hidden">
+                        <span class="text-lg">⚙️</span>
+                        <span>ตั้งค่าระบบ (Admin)</span>
+                    </button>
+                </div>
             </div>
         </nav>
 
-        <!-- Main Content -->
-        <main class="flex-1 w-full overflow-auto p-4 md:p-6">
+        <!-- Main Content Area -->
+        <main class="flex-1 w-full max-w-6xl mx-auto p-4 md:p-6 lg:p-8">
 
-            <!-- Booking Tab -->
+            <!-- TAB 1: Booking Tab -->
             <div id="content-booking" class="max-w-4xl mx-auto">
-                <div class="bg-white rounded-lg shadow-lg p-6 space-y-6">
+                <div class="modern-card p-6 md:p-8 space-y-6">
 
-                    <!-- ===== ปิดรับจองแล้ว - แสดงข้อความแทนฟอร์ม ===== -->
-                    <div id="bookingClosedMessage" class="text-center py-8">
-                        <div class="mx-auto w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mb-6">
-                            <span class="text-5xl">🚫</span>
+                    <!-- Closed Booking Banner -->
+                    <div id="bookingClosedMessage" class="text-center py-10">
+                        <div class="mx-auto w-20 h-20 bg-amber-50 border border-amber-200 rounded-3xl flex items-center justify-center mb-5 shadow-sm">
+                            <span class="text-4xl">🚫</span>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">ปิดรับจองแล้ว</h2>
-                        <p class="text-lg text-gray-600 mb-6">ขณะนี้ระบบปิดทำการรับจองแล้ว</p>
+                        <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">ปิดรับการจองแล้ว</h2>
+                        <p class="text-slate-500 mb-6 text-sm md:text-base">ขณะนี้ระบบปิดทำการรับจองกิจกรรมสำหรับรอบนี้แล้ว</p>
 
-                        <div class="bg-orange-50 border-2 border-orange-200 rounded-lg p-4 mb-6 max-w-md mx-auto">
-                            <p class="text-orange-700 font-medium">⚠️ หากท่านต้องการจองเพิ่มเติม</p>
-                            <p class="text-gray-700">กรุณาติดต่อสำนักงานโดยตรง</p>
-                        </div>
-
-                        <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 max-w-md mx-auto">
-                            <p class="font-semibold text-blue-800 mb-2">📞 ช่องทางติดต่อ:</p>
-                            <p class="text-gray-700 font-medium text-lg">สำนักงานสหกรณ์จังหวัดระยอง</p>
-                            <p class="text-3xl font-bold text-blue-700 mt-2">📱 038-694106</p>
+                        <div class="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 mb-6 max-w-md mx-auto text-sm">
+                            <p class="text-amber-800 font-semibold">⚠️ ต้องการสอบถามข้อมูลเพิ่มเติม</p>
+                            <p class="text-amber-700 mt-0.5">กรุณาติดต่อสำนักงานสหกรณ์จังหวัดระยองโดยตรง</p>
                         </div>
 
-                        <div class="mt-8 flex justify-center gap-4">
+                        <div class="bg-indigo-50/70 border border-indigo-200/80 rounded-2xl p-5 max-w-md mx-auto mb-8 shadow-sm">
+                            <p class="text-xs font-semibold text-indigo-700 uppercase tracking-wider mb-1">📞 ช่องทางติดต่อ</p>
+                            <p class="text-slate-700 font-medium">สำนักงานสหกรณ์จังหวัดระยอง</p>
+                            <p class="text-2xl font-bold text-indigo-600 mt-1">038-694106</p>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-3">
                             <button onclick="switchTab('payment')"
-                                class="bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-                                💰 แจ้งชำระเงิน
+                                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 px-5 rounded-xl font-medium shadow-sm transition-all">
+                                <span>💰</span> แจ้งชำระเงิน
                             </button>
                             <button onclick="switchTab('status')"
-                                class="bg-indigo-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-600 transition-colors">
-                                📜 ตรวจสอบสถานะ
+                                class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 py-2.5 px-5 rounded-xl font-medium shadow-sm transition-all">
+                                <span>📜</span> ตรวจสอบสถานะ
                             </button>
                         </div>
                     </div>
-                    <!-- ===== จบส่วนปิดรับจอง ===== -->
 
-                    <!-- ===== ฟอร์มเดิม (ซ่อนไว้) ===== -->
+                    <!-- Dynamic Booking Form Wrapper -->
                     <div id="bookingFormWrapper" class="hidden">
-
-                        <!-- Dynamic Booking Form Container -->
-                        <div id="dynamicBookingForm" class="space-y-8">
-                            <!-- This will be populated by app.js -->
-                            <div class="flex justify-center py-12">
-                                <div class="spinner"></div>
+                        <div id="dynamicBookingForm" class="space-y-6">
+                            <!-- Populated dynamically by app.js -->
+                            <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+                                <div class="spinner spinner-dark mb-3"></div>
+                                <p class="text-sm">กำลังโหลดข้อมูลกิจกรรม...</p>
                             </div>
                         </div>
 
-                        <!-- Preview Button -->
-                        <div id="formActions" class="hidden">
+                        <!-- Form Actions -->
+                        <div id="formActions" class="hidden pt-6">
                             <button onclick="previewBooking()"
-                                class="w-full bg-indigo-600 text-white py-4 px-6 rounded-xl font-bold text-xl hover:bg-indigo-700 transition-all shadow-lg transform hover:-translate-y-1 active:translate-y-0">
-                                ⏭️ ถัดไป: ตรวจสอบการจอง
+                                class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-4 px-6 rounded-2xl font-bold text-lg hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 transform active:scale-[0.99]">
+                                <span>🔍</span>
+                                <span>ถัดไป: ตรวจสอบข้อมูลการจอง</span>
                             </button>
                         </div>
                     </div>
-                    <!-- ===== จบฟอร์มเดิม (ซ่อนไว้) ===== -->
+
                 </div>
             </div>
 
-            <!-- Payment Tab -->
+            <!-- TAB 2: Payment Tab -->
             <div id="content-payment" class="hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-lg shadow-lg p-6 space-y-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">💰 แจ้งชำระเงิน</h2>
-                    <div class="space-y-3">
-                        <label class="block text-lg font-semibold text-gray-700">เลือกสหกรณ์</label>
-
-                        <!-- Search Box for Payment -->
-                        <div class="relative">
-                            <input type="text" id="paymentSearchInput"
-                                placeholder="🔍 ค้นหาชื่อสหกรณ์ หรือ Booking ID..."
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none mb-2"
-                                oninput="filterPaymentTable(this.value)">
+                <div class="modern-card p-6 md:p-8 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2.5">
+                                <span>💰</span> แจ้งชำระเงินและแนบสลิป
+                            </h2>
+                            <p class="text-xs md:text-sm text-slate-500 mt-1">เลือกรายการสหกรณ์ของท่านเพื่อดูยอดเงินและแนบหลักฐานการโอน</p>
                         </div>
+                    </div>
 
-                        <!-- Table for Payment Selection -->
-                        <div class="overflow-x-auto max-h-96 border-2 border-gray-200 rounded-lg">
+                    <!-- Search Box for Payment -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            🔍
+                        </div>
+                        <input type="text" id="paymentSearchInput"
+                            placeholder="ค้นหาด้วยชื่อสหกรณ์ หรือ Booking ID..."
+                            class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm bg-white"
+                            oninput="filterPaymentTable(this.value)">
+                    </div>
+
+                    <!-- Table for Payment Selection -->
+                    <div class="overflow-hidden border border-slate-200 rounded-2xl shadow-sm bg-white">
+                        <div class="overflow-x-auto max-h-96 custom-scrollbar">
                             <table class="w-full text-left border-collapse">
-                                <thead class="bg-indigo-50 sticky top-0 shadow-sm z-10">
+                                <thead class="bg-slate-50 sticky top-0 border-b border-slate-200 z-10">
                                     <tr>
-                                        <th class="p-3 border-b border-indigo-100 font-semibold text-indigo-700 w-1/3">
-                                            Booking ID</th>
-                                        <th class="p-3 border-b border-indigo-100 font-semibold text-indigo-700 w-2/3">
-                                            ชื่อสหกรณ์</th>
+                                        <th class="p-3.5 text-xs font-bold text-slate-600 uppercase tracking-wider w-2/5 sm:w-1/3">
+                                            Booking ID
+                                        </th>
+                                        <th class="p-3.5 text-xs font-bold text-slate-600 uppercase tracking-wider w-3/5 sm:w-2/3">
+                                            ชื่อสหกรณ์ / หน่วยงาน
+                                        </th>
                                     </tr>
                                 </thead>
-                                <tbody id="paymentCoopTableBody" class="bg-white divide-y divide-gray-100">
-                                    <!-- Rows will be populated here -->
+                                <tbody id="paymentCoopTableBody" class="divide-y divide-slate-100 text-sm">
+                                    <!-- Populated by JS -->
                                 </tbody>
                             </table>
-                            <div id="paymentNoData" class="hidden p-4 text-center text-gray-500">ไม่พบข้อมูล</div>
+                        </div>
+                        
+                        <div id="paymentNoData" class="hidden p-8 text-center text-slate-400 text-sm">
+                            ไม่พบข้อมูลการจองที่รอชำระ
+                        </div>
 
-                            <!-- Pagination Controls -->
-                            <div id="paymentPagination"
-                                class="hidden flex justify-between items-center px-4 py-3 bg-white border-t border-gray-200">
-                                <span id="paymentPageInfo" class="text-sm text-gray-700">หน้า 1 จาก 1</span>
-                                <div class="space-x-2">
-                                    <button id="paymentPrevBtn" onclick="changePaymentPage(-1)"
-                                        class="px-3 py-1 border rounded hover:bg-gray-100 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-                                        ก่อนหน้า
-                                    </button>
-                                    <button id="paymentNextBtn" onclick="changePaymentPage(1)"
-                                        class="px-3 py-1 border rounded hover:bg-gray-100 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-                                        ถัดไป
-                                    </button>
-                                </div>
+                        <!-- Pagination Controls -->
+                        <div id="paymentPagination" class="hidden flex justify-between items-center px-4 py-3 bg-slate-50/80 border-t border-slate-200 text-xs text-slate-600">
+                            <span id="paymentPageInfo">หน้า 1 จาก 1</span>
+                            <div class="space-x-1.5">
+                                <button id="paymentPrevBtn" onclick="changePaymentPage(-1)"
+                                    class="px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white bg-slate-100 text-slate-700 font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                                    ← ก่อนหน้า
+                                </button>
+                                <button id="paymentNextBtn" onclick="changePaymentPage(1)"
+                                    class="px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white bg-slate-100 text-slate-700 font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                                    ถัดไป →
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Status Tab (Public) -->
+            <!-- TAB 3: Status Tab (Public) -->
             <div id="content-status" class="hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">📜 สถานะการชำระเงิน</h2>
+                <div class="modern-card p-6 md:p-8 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2.5">
+                                <span>📜</span> ตรวจสอบสถานะการชำระเงิน
+                            </h2>
+                            <p class="text-xs md:text-sm text-slate-500 mt-1">ติดตามสถานะการจองและการยืนยันยอดชำระเงินแบบสาธารณะ</p>
+                        </div>
+                    </div>
 
                     <!-- Search Box -->
-                    <div class="mb-4">
-                        <input type="text" id="statusSearchInput" placeholder="🔍 ค้นหาชื่อสหกรณ์..."
-                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            🔍
+                        </div>
+                        <input type="text" id="statusSearchInput"
+                            placeholder="ค้นหาชื่อสหกรณ์ หรือ Booking ID..."
+                            class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm bg-white"
                             oninput="searchStatusTable(this.value)">
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="bg-indigo-100 text-indigo-900">
-                                    <th class="border px-4 py-3 text-center">Booking ID</th>
-                                    <th class="border px-4 py-3 text-center">สีทีม</th>
-                                    <th class="border px-4 py-3 text-left">สหกรณ์</th>
-                                    <th class="border px-4 py-3 text-center">ผลการชำระเงิน</th>
-                                </tr>
-                            </thead>
-                            <tbody id="publicStatusTableBody">
-                                <!-- Data will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination Controls -->
-                    <div id="statusPagination" class="mt-4 flex items-center justify-between border-t pt-4">
-                        <button onclick="changeStatusPage(-1)" id="statusPrevBtn"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-                            ← ก่อนหน้า
-                        </button>
-                        <span id="statusPageInfo" class="text-gray-700 font-medium">หน้า 1 จาก 1</span>
-                        <button onclick="changeStatusPage(1)" id="statusNextBtn"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-                            ถัดไป →
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Summary Tab -->
-            <div id="content-summary" class="hidden max-w-6xl mx-auto">
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 สรุปข้อมูลทั้งหมด</h2>
-
-                    <!-- Summary Cards with Dropdown Filter -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <h3 class="text-lg font-bold text-gray-700" id="summaryCardsTitle">📊 สรุปข้อมูลทั้งหมด</h3>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <div
-                                class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border-2 border-indigo-200">
-                                <span class="text-sm text-indigo-600 font-bold whitespace-nowrap">📅 จาก:</span>
-                                <input type="date" id="summaryStartDate" onchange="updateSummaryTab()"
-                                    class="text-sm text-indigo-700 font-medium focus:outline-none bg-transparent"
-                                    title="วันที่เริ่มต้น (Start Date)">
-                                <span class="text-sm text-indigo-600 font-bold whitespace-nowrap">ถึง:</span>
-                                <input type="date" id="summaryEndDate" onchange="updateSummaryTab()"
-                                    class="text-sm text-indigo-700 font-medium focus:outline-none bg-transparent"
-                                    title="วันที่สิ้นสุด (End Date)">
-                            </div>
-                            <select id="summaryFilter" onchange="updateSummaryCards()"
-                                class="px-4 py-2 border-2 border-indigo-300 rounded-lg bg-white text-indigo-700 font-medium focus:outline-none focus:border-indigo-500">
-                                <option value="all">📊 ทั้งหมด</option>
-                                <option value="paid">✅ ชำระแล้ว</option>
-                                <option value="pending">⏳ รอชำระ</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="summaryCardsContainer" class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
-                        <div class="bg-blue-100 rounded-lg p-4 text-center">
-                            <p class="text-3xl font-bold text-blue-700" id="cardCoops">0</p>
-                            <p class="text-sm text-gray-700 mt-1">สหกรณ์</p>
-                        </div>
-                        <div class="bg-green-100 rounded-lg p-4 text-center">
-                            <p class="text-3xl font-bold text-green-700" id="cardShirts">0</p>
-                            <p class="text-sm text-gray-700 mt-1">เสื้อ (ตัว)</p>
-                        </div>
-                        <div class="bg-purple-100 rounded-lg p-4 text-center">
-                            <p class="text-3xl font-bold text-purple-700" id="cardFlowers">0</p>
-                            <p class="text-sm text-gray-700 mt-1">พานพุ่ม (พาน)</p>
-                        </div>
-                        <div class="bg-pink-100 rounded-lg p-4 text-center">
-                            <p class="text-3xl font-bold text-pink-700" id="cardTables">0</p>
-                            <p class="text-sm text-gray-700 mt-1">โต๊ะจีน (โต๊ะ)</p>
-                        </div>
-                        <div class="bg-teal-100 rounded-lg p-4 text-center">
-                            <p class="text-3xl font-bold text-teal-700" id="cardSponsor">0</p>
-                            <p class="text-sm text-gray-700 mt-1">เงินสนับสนุน (บาท)</p>
-                        </div>
-                        <div class="bg-amber-100 rounded-lg p-4 text-center">
-                            <p class="text-3xl font-bold text-amber-700" id="cardRevenue">0</p>
-                            <p class="text-sm text-gray-700 mt-1">ยอดเงินรวม (บาท)</p>
-                        </div>
-                    </div>
-
-                    <!-- Shirt Size Breakdown -->
-                    <div class="mb-6">
-                        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-                            <h3 class="text-xl font-bold text-gray-700">👕 สรุปยอดเสื้อตามไซส์</h3>
-                            <select id="shirtSummaryFilter" onchange="updateShirtSummary()"
-                                class="px-4 py-2 border-2 border-indigo-300 rounded-lg bg-white text-indigo-700 font-medium focus:outline-none focus:border-indigo-500">
-                                <option value="all">📊 ทั้งหมด</option>
-                                <option value="paid">✅ ชำระแล้ว</option>
-                                <option value="pending">⏳ รอชำระ</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">SS</p>
-                                <p class="text-xl font-bold text-gray-800" id="totalSS">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">S</p>
-                                <p class="text-xl font-bold text-gray-800" id="totalS">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">M</p>
-                                <p class="text-xl font-bold text-gray-800" id="totalM">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">L</p>
-                                <p class="text-xl font-bold text-gray-800" id="totalL">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">XL</p>
-                                <p class="text-xl font-bold text-gray-800" id="totalXL">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">2XL</p>
-                                <p class="text-xl font-bold text-gray-800" id="total2XL">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">3XL</p>
-                                <p class="text-xl font-bold text-gray-800" id="total3XL">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">4XL</p>
-                                <p class="text-xl font-bold text-gray-800" id="total4XL">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">5XL</p>
-                                <p class="text-xl font-bold text-gray-800" id="total5XL">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">6XL</p>
-                                <p class="text-xl font-bold text-gray-800" id="total6XL">0</p>
-                            </div>
-                            <div class="bg-gray-100 rounded-lg p-3 text-center border border-gray-200">
-                                <p class="text-sm text-gray-600 font-semibold">7XL</p>
-                                <p class="text-xl font-bold text-gray-800" id="total7XL">0</p>
-                            </div>
-                            <div class="bg-purple-100 rounded-lg p-3 text-center border border-purple-200">
-                                <p class="text-sm text-purple-600 font-semibold">พิเศษ</p>
-                                <p class="text-xl font-bold text-purple-800" id="totalSpecial">0</p>
-                            </div>
-                        </div>
-
-                        <div class="mb-6 mt-6">
-                            <h3 class="text-xl font-bold mb-3">👕 สรุปยอดเสื้อตามสีทีม</h3>
-                            <div class="overflow-x-auto">
-                                <table class="w-full border-collapse text-sm">
-                                    <thead>
-                                        <tr class="bg-gray-100">
-                                            <th class="border px-2 py-2 text-left">สีทีม</th>
-                                            <th class="border px-2 py-2 text-center">SS</th>
-                                            <th class="border px-2 py-2 text-center">S</th>
-                                            <th class="border px-2 py-2 text-center">M</th>
-                                            <th class="border px-2 py-2 text-center">L</th>
-                                            <th class="border px-2 py-2 text-center">XL</th>
-                                            <th class="border px-2 py-2 text-center">2XL</th>
-                                            <th class="border px-2 py-2 text-center">3XL</th>
-                                            <th class="border px-2 py-2 text-center">4XL</th>
-                                            <th class="border px-2 py-2 text-center">5XL</th>
-                                            <th class="border px-2 py-2 text-center">6XL</th>
-                                            <th class="border px-2 py-2 text-center">7XL</th>
-                                            <th class="border px-2 py-2 text-center text-purple-600">พิเศษ</th>
-                                            <th class="border px-2 py-2 text-center font-bold">รวม</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="bg-green-50">
-                                            <td class="border px-2 py-2 font-bold text-green-700">🟢 สีเขียว</td>
-                                            <td class="border px-2 py-2 text-center" id="greenSS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="greenS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="greenM">0</td>
-                                            <td class="border px-2 py-2 text-center" id="greenL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="greenXL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="green2XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="green3XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="green4XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="green5XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="green6XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="green7XL">0</td>
-                                            <td class="border px-2 py-2 text-center text-purple-700" id="greenSpecial">0
-                                            </td>
-                                            <td class="border px-2 py-2 text-center font-bold text-green-700"
-                                                id="greenTotal">0</td>
-                                        </tr>
-                                        <tr class="bg-blue-50">
-                                            <td class="border px-2 py-2 font-bold text-blue-700">🔵 สีฟ้า</td>
-                                            <td class="border px-2 py-2 text-center" id="blueSS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blueS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blueM">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blueL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blueXL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blue2XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blue3XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blue4XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blue5XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blue6XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="blue7XL">0</td>
-                                            <td class="border px-2 py-2 text-center text-purple-700" id="blueSpecial">0
-                                            </td>
-                                            <td class="border px-2 py-2 text-center font-bold text-blue-700"
-                                                id="blueTotal">0</td>
-                                        </tr>
-                                        <tr class="bg-purple-50">
-                                            <td class="border px-2 py-2 font-bold text-purple-700">🟣 สีม่วง</td>
-                                            <td class="border px-2 py-2 text-center" id="purpleSS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purpleS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purpleM">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purpleL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purpleXL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purple2XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purple3XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purple4XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purple5XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purple6XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="purple7XL">0</td>
-                                            <td class="border px-2 py-2 text-center text-purple-700" id="purpleSpecial">
-                                                0</td>
-                                            <td class="border px-2 py-2 text-center font-bold text-purple-700"
-                                                id="purpleTotal">0</td>
-                                        </tr>
-                                        <tr class="bg-pink-50">
-                                            <td class="border px-2 py-2 font-bold text-pink-700">💗 สีชมพู</td>
-                                            <td class="border px-2 py-2 text-center" id="pinkSS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pinkS">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pinkM">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pinkL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pinkXL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pink2XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pink3XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pink4XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pink5XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pink6XL">0</td>
-                                            <td class="border px-2 py-2 text-center" id="pink7XL">0</td>
-                                            <td class="border px-2 py-2 text-center text-purple-700" id="pinkSpecial">0
-                                            </td>
-                                            <td class="border px-2 py-2 text-center font-bold text-pink-700"
-                                                id="pinkTotal">0</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- PDF Export Buttons for Factory -->
-                        <div
-                            class="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-lg p-4 mt-4">
-                            <h4 class="font-bold text-lg text-red-700 mb-3 flex items-center gap-2">
-                                📄 ดาวน์โหลด PDF สรุปยอดเสื้อ (ส่งร้านค้าผลิต)
-                            </h4>
-                            <p class="text-sm text-gray-600 mb-3">สร้างไฟล์ PDF แบ่งตามสีทีม และแต่ละสีแบ่งตามไซส์
-                                สำหรับส่งให้ร้านค้า</p>
-                            <div class="flex flex-wrap gap-3">
-                                <button onclick="generateDetailedSummaryPDF('all')"
-                                    class="flex-1 min-w-[140px] bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-md flex items-center justify-center gap-2">
-                                    📊 ทั้งหมด
-                                </button>
-                                <button onclick="generateDetailedSummaryPDF('pending')"
-                                    class="flex-1 min-w-[140px] bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all shadow-md flex items-center justify-center gap-2">
-                                    ⏳ รอชำระ
-                                </button>
-                                <button onclick="generateDetailedSummaryPDF('paid')"
-                                    class="flex-1 min-w-[140px] bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all shadow-md flex items-center justify-center gap-2">
-                                    ✅ ชำระแล้ว
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Search Box -->
-                        <div class="mb-4 mt-6">
-                            <input type="text" id="summarySearchInput" placeholder="🔍 ค้นหาชื่อสหกรณ์..."
-                                class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
-                                oninput="searchSummaryTable(this.value)">
-                        </div>
-
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-100">
-                                        <th class="border px-4 py-2 text-left">สหกรณ์</th>
-                                        <th class="border px-4 py-2 text-center">สีทีม</th>
-                                        <th class="border px-4 py-2 text-center">เสื้อ</th>
-                                        <th class="border px-4 py-2 text-center">พานพุ่ม</th>
-                                        <th class="border px-4 py-2 text-center">โต๊ะจีน</th>
-                                        <th class="border px-4 py-2 text-center">เงินสนับสนุน</th>
-                                        <th class="border px-4 py-2 text-center">ยอดรวม</th>
-                                        <th class="border px-4 py-2 text-center">รายละเอียด</th>
-                                        <th class="border px-4 py-2 text-center">สถานะ</th>
-                                        <th id="bookingIdHeader" class="border px-4 py-2 text-center hidden">Booking
-                                            ID
-                                        </th>
-                                        <th id="pdfExportHeader" class="border px-4 py-2 text-center hidden">เอกสาร
-                                        </th>
-                                        <th id="distributionHeader" class="border px-4 py-2 text-center hidden">
-                                            การแจกจ่าย</th>
+                    <!-- Status Table -->
+                    <div class="overflow-hidden border border-slate-200 rounded-2xl shadow-sm bg-white">
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead class="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3.5 text-xs font-bold text-slate-600 uppercase tracking-wider text-center w-28">Booking ID</th>
+                                        <th class="p-3.5 text-xs font-bold text-slate-600 uppercase tracking-wider text-center w-28">สีทีม</th>
+                                        <th class="p-3.5 text-xs font-bold text-slate-600 uppercase tracking-wider">สหกรณ์ / หน่วยงาน</th>
+                                        <th class="p-3.5 text-xs font-bold text-slate-600 uppercase tracking-wider text-center w-36">สถานะการชำระ</th>
                                     </tr>
                                 </thead>
-                                <tbody id="summaryTableBody">
+                                <tbody id="publicStatusTableBody" class="divide-y divide-slate-100">
+                                    <!-- Populated by JS -->
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- Pagination Controls -->
-                        <div id="summaryPagination" class="mt-4 flex items-center justify-between border-t pt-4">
-                            <button onclick="changeSummaryPage(-1)" id="summaryPrevBtn"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                        <div id="statusPagination" class="flex items-center justify-between px-4 py-3.5 border-t border-slate-200 bg-slate-50/80 text-xs text-slate-600">
+                            <button onclick="changeStatusPage(-1)" id="statusPrevBtn"
+                                class="px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
                                 ← ก่อนหน้า
                             </button>
-                            <span id="summaryPageInfo" class="text-gray-700 font-medium">หน้า 1 จาก 1</span>
-                            <button onclick="changeSummaryPage(1)" id="summaryNextBtn"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                            <span id="statusPageInfo" class="font-medium">หน้า 1 จาก 1</span>
+                            <button onclick="changeStatusPage(1)" id="statusNextBtn"
+                                class="px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
                                 ถัดไป →
                             </button>
                         </div>
@@ -506,111 +258,426 @@
                 </div>
             </div>
 
-            <!-- Settings Tab -->
+            <!-- TAB 4: Summary Tab (Admin Dashboard) -->
+            <div id="content-summary" class="hidden max-w-6xl mx-auto space-y-6">
+                <div class="modern-card p-6 md:p-8 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2.5">
+                                <span>📊</span> สรุปข้อมูลทั้งหมด (Admin Dashboard)
+                            </h2>
+                            <p class="text-xs md:text-sm text-slate-500 mt-1">ภาพรวมยอดสั่งผลิต รายได้ และสถิติกิจกรรมประจำงาน</p>
+                        </div>
+
+                        <!-- Date Range & Filter -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
+                                <span class="text-slate-500 font-medium">📅</span>
+                                <input type="date" id="summaryStartDate" onchange="updateSummaryTab()"
+                                    class="bg-transparent text-slate-700 font-medium outline-none" title="วันที่เริ่มต้น">
+                                <span class="text-slate-400">ถึง</span>
+                                <input type="date" id="summaryEndDate" onchange="updateSummaryTab()"
+                                    class="bg-transparent text-slate-700 font-medium outline-none" title="วันที่สิ้นสุด">
+                            </div>
+                            <select id="summaryFilter" onchange="updateSummaryCards()"
+                                class="px-3 py-1.5 border border-slate-200 rounded-xl bg-white text-slate-700 text-xs font-semibold focus:outline-none focus:border-indigo-500 shadow-sm">
+                                <option value="all">📊 ข้อมูลทั้งหมด</option>
+                                <option value="paid">✅ ชำระเงินแล้ว</option>
+                                <option value="pending">⏳ ยังไม่ชำระ / รอตรวจ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Modern Summary KPI Cards -->
+                    <div id="summaryCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-100 rounded-2xl p-4 text-center shadow-sm">
+                            <p class="text-2xl md:text-3xl font-extrabold text-blue-700" id="cardCoops">0</p>
+                            <p class="text-xs font-medium text-blue-600/80 mt-1">สหกรณ์</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-emerald-50 to-green-50/50 border border-emerald-100 rounded-2xl p-4 text-center shadow-sm">
+                            <p class="text-2xl md:text-3xl font-extrabold text-emerald-700" id="cardShirts">0</p>
+                            <p class="text-xs font-medium text-emerald-600/80 mt-1">เสื้อทั้งหมด (ตัว)</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-violet-50/50 border border-purple-100 rounded-2xl p-4 text-center shadow-sm">
+                            <p class="text-2xl md:text-3xl font-extrabold text-purple-700" id="cardFlowers">0</p>
+                            <p class="text-xs font-medium text-purple-600/80 mt-1">พานพุ่ม (พาน)</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-rose-50 to-pink-50/50 border border-rose-100 rounded-2xl p-4 text-center shadow-sm">
+                            <p class="text-2xl md:text-3xl font-extrabold text-rose-700" id="cardTables">0</p>
+                            <p class="text-xs font-medium text-rose-600/80 mt-1">โต๊ะจีน (โต๊ะ)</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-teal-50 to-cyan-50/50 border border-teal-100 rounded-2xl p-4 text-center shadow-sm">
+                            <p class="text-2xl md:text-3xl font-extrabold text-teal-700" id="cardSponsor">0</p>
+                            <p class="text-xs font-medium text-teal-600/80 mt-1">เงินสนับสนุน (บาท)</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-amber-50 to-orange-50/50 border border-amber-100 rounded-2xl p-4 text-center shadow-sm">
+                            <p class="text-2xl md:text-3xl font-extrabold text-amber-700" id="cardRevenue">0</p>
+                            <p class="text-xs font-medium text-amber-600/80 mt-1">ยอดรวมทั้งหมด (บาท)</p>
+                        </div>
+                    </div>
+
+                    <!-- Shirt Size Breakdown -->
+                    <div class="border border-slate-200/80 rounded-2xl p-5 bg-slate-50/50 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <h3 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <span>👕</span> สรุปยอดเสื้อตามไซส์ (ส่งสั่งผลิต)
+                            </h3>
+                            <select id="shirtSummaryFilter" onchange="updateShirtSummary()"
+                                class="px-3 py-1.5 border border-slate-200 rounded-xl bg-white text-slate-700 text-xs font-semibold focus:outline-none focus:border-indigo-500 shadow-sm">
+                                <option value="all">📊 ทั้งหมด</option>
+                                <option value="paid">✅ ชำระแล้ว</option>
+                                <option value="pending">⏳ รอชำระ</option>
+                            </select>
+                        </div>
+
+                        <!-- 12 Sizes Grid -->
+                        <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-2 text-center">
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">SS</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="totalSS">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">S</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="totalS">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">M</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="totalM">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">L</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="totalL">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">XL</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="totalXL">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">2XL</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="total2XL">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">3XL</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="total3XL">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">4XL</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="total4XL">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">5XL</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="total5XL">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">6XL</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="total6XL">0</p>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-2xs">
+                                <p class="text-xs text-slate-500 font-semibold">7XL</p>
+                                <p class="text-lg font-bold text-slate-800 mt-0.5" id="total7XL">0</p>
+                            </div>
+                            <div class="bg-purple-50 rounded-xl p-2.5 border border-purple-200 shadow-2xs">
+                                <p class="text-xs text-purple-600 font-semibold">พิเศษ</p>
+                                <p class="text-lg font-bold text-purple-800 mt-0.5" id="totalSpecial">0</p>
+                            </div>
+                        </div>
+
+                        <!-- Team Color & Size Matrix Table -->
+                        <div class="pt-3">
+                            <h4 class="text-sm font-bold text-slate-700 mb-2.5 flex items-center gap-1.5">
+                                <span>🎨</span> สรุปยอดเสื้อจำแนกตามสีทีมกีฬา
+                            </h4>
+                            <div class="overflow-x-auto rounded-xl border border-slate-200 custom-scrollbar bg-white">
+                                <table class="w-full border-collapse text-xs text-center">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                                            <th class="p-2.5 text-left table-sticky-col">สีทีม</th>
+                                            <th class="p-2">SS</th>
+                                            <th class="p-2">S</th>
+                                            <th class="p-2">M</th>
+                                            <th class="p-2">L</th>
+                                            <th class="p-2">XL</th>
+                                            <th class="p-2">2XL</th>
+                                            <th class="p-2">3XL</th>
+                                            <th class="p-2">4XL</th>
+                                            <th class="p-2">5XL</th>
+                                            <th class="p-2">6XL</th>
+                                            <th class="p-2">7XL</th>
+                                            <th class="p-2 text-purple-600">พิเศษ</th>
+                                            <th class="p-2 font-extrabold bg-slate-100">รวม</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        <tr class="hover:bg-emerald-50/40">
+                                            <td class="p-2.5 text-left font-bold text-emerald-700 table-sticky-col">🟢 สีเขียว</td>
+                                            <td class="p-2" id="greenSS">0</td>
+                                            <td class="p-2" id="greenS">0</td>
+                                            <td class="p-2" id="greenM">0</td>
+                                            <td class="p-2" id="greenL">0</td>
+                                            <td class="p-2" id="greenXL">0</td>
+                                            <td class="p-2" id="green2XL">0</td>
+                                            <td class="p-2" id="green3XL">0</td>
+                                            <td class="p-2" id="green4XL">0</td>
+                                            <td class="p-2" id="green5XL">0</td>
+                                            <td class="p-2" id="green6XL">0</td>
+                                            <td class="p-2" id="green7XL">0</td>
+                                            <td class="p-2 text-purple-700" id="greenSpecial">0</td>
+                                            <td class="p-2 font-bold text-emerald-700 bg-slate-50" id="greenTotal">0</td>
+                                        </tr>
+                                        <tr class="hover:bg-blue-50/40">
+                                            <td class="p-2.5 text-left font-bold text-blue-700 table-sticky-col">🔵 สีฟ้า</td>
+                                            <td class="p-2" id="blueSS">0</td>
+                                            <td class="p-2" id="blueS">0</td>
+                                            <td class="p-2" id="blueM">0</td>
+                                            <td class="p-2" id="blueL">0</td>
+                                            <td class="p-2" id="blueXL">0</td>
+                                            <td class="p-2" id="blue2XL">0</td>
+                                            <td class="p-2" id="blue3XL">0</td>
+                                            <td class="p-2" id="blue4XL">0</td>
+                                            <td class="p-2" id="blue5XL">0</td>
+                                            <td class="p-2" id="blue6XL">0</td>
+                                            <td class="p-2" id="blue7XL">0</td>
+                                            <td class="p-2 text-purple-700" id="blueSpecial">0</td>
+                                            <td class="p-2 font-bold text-blue-700 bg-slate-50" id="blueTotal">0</td>
+                                        </tr>
+                                        <tr class="hover:bg-purple-50/40">
+                                            <td class="p-2.5 text-left font-bold text-purple-700 table-sticky-col">🟣 สีม่วง</td>
+                                            <td class="p-2" id="purpleSS">0</td>
+                                            <td class="p-2" id="purpleS">0</td>
+                                            <td class="p-2" id="purpleM">0</td>
+                                            <td class="p-2" id="purpleL">0</td>
+                                            <td class="p-2" id="purpleXL">0</td>
+                                            <td class="p-2" id="purple2XL">0</td>
+                                            <td class="p-2" id="purple3XL">0</td>
+                                            <td class="p-2" id="purple4XL">0</td>
+                                            <td class="p-2" id="purple5XL">0</td>
+                                            <td class="p-2" id="purple6XL">0</td>
+                                            <td class="p-2" id="purple7XL">0</td>
+                                            <td class="p-2 text-purple-700" id="purpleSpecial">0</td>
+                                            <td class="p-2 font-bold text-purple-700 bg-slate-50" id="purpleTotal">0</td>
+                                        </tr>
+                                        <tr class="hover:bg-rose-50/40">
+                                            <td class="p-2.5 text-left font-bold text-rose-700 table-sticky-col">💗 สีชมพู</td>
+                                            <td class="p-2" id="pinkSS">0</td>
+                                            <td class="p-2" id="pinkS">0</td>
+                                            <td class="p-2" id="pinkM">0</td>
+                                            <td class="p-2" id="pinkL">0</td>
+                                            <td class="p-2" id="pinkXL">0</td>
+                                            <td class="p-2" id="pink2XL">0</td>
+                                            <td class="p-2" id="pink3XL">0</td>
+                                            <td class="p-2" id="pink4XL">0</td>
+                                            <td class="p-2" id="pink5XL">0</td>
+                                            <td class="p-2" id="pink6XL">0</td>
+                                            <td class="p-2" id="pink7XL">0</td>
+                                            <td class="p-2 text-purple-700" id="pinkSpecial">0</td>
+                                            <td class="p-2 font-bold text-rose-700 bg-slate-50" id="pinkTotal">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- PDF Export Banner -->
+                        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-xl p-4 mt-4">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <h4 class="font-bold text-amber-900 text-sm flex items-center gap-1.5">
+                                        📄 ดาวน์โหลด PDF สรุปยอดเสื้อ (สำหรับส่งร้านค้าผลิต)
+                                    </h4>
+                                    <p class="text-xs text-amber-700 mt-0.5">แบ่งตามสีทีมและจัดแยกตามไซส์อย่างชัดเจน</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button onclick="generateDetailedSummaryPDF('all')"
+                                        class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow-sm transition-all flex items-center gap-1">
+                                        📊 ทั้งหมด
+                                    </button>
+                                    <button onclick="generateDetailedSummaryPDF('pending')"
+                                        class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow-sm transition-all flex items-center gap-1">
+                                        ⏳ รอชำระ
+                                    </button>
+                                    <button onclick="generateDetailedSummaryPDF('paid')"
+                                        class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-3.5 rounded-lg shadow-sm transition-all flex items-center gap-1">
+                                        ✅ ชำระแล้ว
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Summary Table -->
+                    <div class="space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <h3 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <span>📋</span> รายชื่อสหกรณ์และรายละเอียดการจอง
+                            </h3>
+                            <div class="relative w-full sm:w-72">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+                                    🔍
+                                </div>
+                                <input type="text" id="summarySearchInput" placeholder="ค้นหาชื่อสหกรณ์..."
+                                    class="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-xl text-xs focus:border-indigo-500 focus:outline-none bg-white shadow-2xs"
+                                    oninput="searchSummaryTable(this.value)">
+                            </div>
+                        </div>
+
+                        <div class="overflow-hidden border border-slate-200 rounded-2xl shadow-sm bg-white">
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="w-full border-collapse text-xs text-left">
+                                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-600">
+                                        <tr>
+                                            <th class="p-3 font-bold table-sticky-col">สหกรณ์</th>
+                                            <th class="p-3 text-center font-bold">สีทีม</th>
+                                            <th class="p-3 text-center font-bold">เสื้อ</th>
+                                            <th class="p-3 text-center font-bold">พานพุ่ม</th>
+                                            <th class="p-3 text-center font-bold">โต๊ะจีน</th>
+                                            <th class="p-3 text-center font-bold">สนับสนุน</th>
+                                            <th class="p-3 text-center font-bold">ยอดรวม</th>
+                                            <th class="p-3 text-center font-bold">รายละเอียด</th>
+                                            <th class="p-3 text-center font-bold">สถานะ</th>
+                                            <th id="bookingIdHeader" class="p-3 text-center font-bold hidden">Booking ID</th>
+                                            <th id="pdfExportHeader" class="p-3 text-center font-bold hidden">เอกสาร</th>
+                                            <th id="distributionHeader" class="p-3 text-center font-bold hidden">การแจกจ่าย</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="summaryTableBody" class="divide-y divide-slate-100">
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination Controls -->
+                            <div id="summaryPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 bg-slate-50/80 text-xs text-slate-600">
+                                <button onclick="changeSummaryPage(-1)" id="summaryPrevBtn"
+                                    class="px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+                                    ← ก่อนหน้า
+                                </button>
+                                <span id="summaryPageInfo" class="font-medium">หน้า 1 จาก 1</span>
+                                <button onclick="changeSummaryPage(1)" id="summaryNextBtn"
+                                    class="px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+                                    ถัดไป →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: Settings Tab (Admin Only) -->
             <div id="content-settings" class="hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">⚙️ ตั้งค่าระบบ (Admin Only)</h2>
-                    
+                <div class="modern-card p-6 md:p-8 space-y-6">
+                    <div class="border-b border-slate-100 pb-4">
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2.5">
+                            <span>⚙️</span> ตั้งค่าระบบ (Admin Only)
+                        </h2>
+                        <p class="text-xs md:text-sm text-slate-500 mt-1">จัดการ Event, กิจกรรม และการเปิด/ปิดรับจอง</p>
+                    </div>
+
                     <form id="settingsForm" onsubmit="saveAllSettings(event)" class="space-y-6">
                         <!-- Event Management -->
                         <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-indigo-700 border-b pb-2">🗂️ จัดการ Event</h3>
+                            <h3 class="text-base font-bold text-indigo-700 border-b border-slate-200 pb-2 flex items-center gap-2">
+                                <span>🗂️</span> จัดการ Event
+                            </h3>
                             
-                            <!-- Current Active Event -->
-                            <div id="currentEventDisplay" class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-4">
+                            <div id="currentEventDisplay" class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4">
                                 <!-- Rendered by JS -->
                             </div>
 
-                            <!-- Event Switcher -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">เปลี่ยน Event ที่ใช้งาน</label>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">สลับ Event ที่ใช้งาน</label>
                                     <select id="eventSwitcher" onchange="switchActiveEvent(this.value)"
-                                        class="w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 font-medium">
-                                        <!-- Options populated by JS -->
+                                        class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 font-medium text-sm bg-white">
+                                        <!-- Populated by JS -->
                                     </select>
                                 </div>
                                 <div class="flex items-end">
                                     <button type="button" onclick="showCreateEventForm()"
-                                        class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-lg font-bold hover:from-emerald-600 hover:to-green-700 transition-all shadow-sm flex items-center justify-center gap-2">
-                                        🆕 สร้าง Event ใหม่ (ปีถัดไป)
+                                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5">
+                                        <span>🆕</span> สร้าง Event ใหม่ (ปีถัดไป)
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Create New Event Form (Hidden by default) -->
-                            <div id="createEventForm" class="hidden bg-green-50 border-2 border-green-300 rounded-xl p-5 space-y-4">
-                                <h4 class="font-bold text-green-800 flex items-center gap-2">🆕 สร้าง Event ใหม่</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Create New Event Form -->
+                            <div id="createEventForm" class="hidden bg-emerald-50/70 border border-emerald-200 rounded-2xl p-5 space-y-4">
+                                <h4 class="font-bold text-emerald-900 text-sm flex items-center gap-1.5">
+                                    <span>🆕</span> ระบุรายละเอียด Event ใหม่
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-600 mb-1">Event ID</label>
-                                        <input type="text" id="newEventId" placeholder="CPD2027" 
-                                            class="w-full px-3 py-2 border rounded-lg font-mono">
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Event ID</label>
+                                        <input type="text" id="newEventId" placeholder="CPD2027"
+                                            class="w-full px-3 py-2 border border-slate-200 rounded-lg font-mono text-sm bg-white">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-600 mb-1">ชื่อ Event</label>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อ Event</label>
                                         <input type="text" id="newEventName" placeholder="งานวันสหกรณ์แห่งชาติ 2570"
-                                            class="w-full px-3 py-2 border rounded-lg">
+                                            class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-600 mb-1">ปี (พ.ศ.)</label>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปี (พ.ศ.)</label>
                                         <input type="text" id="newEventYear" placeholder="2570"
-                                            class="w-full px-3 py-2 border rounded-lg">
+                                            class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white">
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3 bg-white p-3 rounded-lg border border-green-200">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" id="copyActivities" checked
-                                            class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
-                                        <span class="text-sm font-medium text-gray-700">คัดลอกกิจกรรมจาก Event ปัจจุบัน</span>
+                                <div class="flex items-center gap-2 bg-white p-3 rounded-xl border border-emerald-100">
+                                    <input type="checkbox" id="copyActivities" checked class="w-4 h-4 text-emerald-600 rounded">
+                                    <label for="copyActivities" class="text-xs font-medium text-slate-700 cursor-pointer">
+                                        คัดลอกรายการกิจกรรมจาก Event ปัจจุบัน
                                     </label>
                                 </div>
-                                <div class="flex gap-3">
+                                <div class="flex gap-2">
                                     <button type="button" onclick="document.getElementById('createEventForm').classList.add('hidden')"
-                                        class="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-300">ยกเลิก</button>
+                                        class="flex-1 bg-white border border-slate-200 text-slate-600 py-2 px-3 rounded-lg text-xs font-medium hover:bg-slate-50">
+                                        ยกเลิก
+                                    </button>
                                     <button type="button" onclick="createNewEvent()"
-                                        class="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-green-700 flex items-center justify-center gap-1">🆕 สร้าง Event</button>
+                                        class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-3 rounded-lg text-xs font-bold shadow-sm">
+                                        ยืนยันสร้าง Event
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Event Settings -->
                         <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-indigo-700 border-b pb-2">📅 ตั้งค่า Event ปัจจุบัน</h3>
+                            <h3 class="text-base font-bold text-indigo-700 border-b border-slate-200 pb-2 flex items-center gap-2">
+                                <span>📅</span> ตั้งค่าสถานะ Event
+                            </h3>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อกิจกรรม (แสดงบนหน้าเว็บ)</label>
-                                <input type="text" id="setEventName" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อกิจกรรม (แสดงบนหน้าเว็บ)</label>
+                                <input type="text" id="setEventName" class="modern-input">
                             </div>
-                            <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-lg">
+                            <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="setIsBookingOpen" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                                    <span class="ml-3 text-sm font-medium text-gray-900">เปิดรับจองกิจกรรม</span>
+                                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                                    <span class="ml-3 text-sm font-semibold text-slate-800">เปิดระบบรับจองกิจกรรม</span>
                                 </label>
                             </div>
                         </div>
 
                         <!-- Dynamic Activities Management -->
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between border-b pb-2">
-                                <h3 class="text-lg font-semibold text-indigo-700">📦 จัดการกิจกรรม</h3>
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                                <h3 class="text-base font-bold text-indigo-700 flex items-center gap-2">
+                                    <span>📦</span> จัดการรายการสินค้า/กิจกรรม
+                                </h3>
                                 <button type="button" onclick="addNewActivity()"
-                                    class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-700 transition-all flex items-center gap-1 shadow-sm">
-                                    ➕ เพิ่มกิจกรรมใหม่
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+                                    ➕ เพิ่มกิจกรรม
                                 </button>
                             </div>
-                            <p class="text-xs text-gray-500 bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
-                                💡 <strong>Sizeable</strong> = มีตัวเลือกไซส์ (เสื้อ), <strong>Quantity</strong> = ระบุจำนวนอย่างเดียว (พานพุ่ม, โต๊ะจีน) 
-                                | ตัวเลือก (Options) คั่นด้วยเครื่องหมายจุลภาค เช่น <code>SS,S,M,L,XL</code>
-                            </p>
                             <div id="activitiesContainer" class="space-y-4">
-                                <!-- Activities will be rendered here dynamically -->
+                                <!-- Populated dynamically by JS -->
                             </div>
                         </div>
 
-                        <!-- Submit -->
+                        <!-- Submit Button -->
                         <div class="pt-4">
-                            <button type="submit" id="saveSettingsBtn" class="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:bg-green-700 transition-all shadow-lg flex items-center justify-center gap-2">
+                            <button type="submit" id="saveSettingsBtn"
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 px-6 rounded-2xl font-bold text-base transition-all shadow-md flex items-center justify-center gap-2">
                                 💾 บันทึกการตั้งค่าทั้งหมด
                             </button>
                         </div>
@@ -621,43 +688,152 @@
         </main>
 
         <!-- Footer -->
-        <footer
-            class="w-full bg-gradient-to-r from-gray-700 to-gray-600 text-white py-4 text-center relative select-none">
-            <p class="text-sm cursor-default" onclick="handleFooterClick()">สำนักงานสหกรณ์จังหวัดระยอง</p>
+        <footer class="w-full bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-auto select-none">
+            <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+                <p class="cursor-pointer hover:text-slate-800 transition-colors" onclick="handleFooterClick()" title="คลิก 5 ครั้งเพื่อเข้าสู่ระบบ Admin">
+                    สำนักงานสหกรณ์จังหวัดระยอง &copy; 2026 ระบบจองเสื้อและกิจกรรมวันสหกรณ์แห่งชาติ
+                </p>
+                <div class="flex items-center gap-3 text-slate-400">
+                    <span id="adminStatusIndicator" class="hidden inline-flex items-center gap-1 text-indigo-600 font-semibold bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
+                        🛡️ Admin Mode
+                    </span>
+                    <span>v1.0.0</span>
+                </div>
+            </div>
         </footer>
 
     </div>
 
-    <!-- Security Modal for Editing -->
-    <div id="securityModal" class="hidden fixed inset-0 modal-backdrop z-[70] flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="bg-yellow-100 p-2 rounded-full">
-                    <span class="text-2xl">🔒</span>
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- 1. ORDER SUCCESS MODAL [NEW!] -->
+    <div id="orderSuccessModal" class="hidden fixed inset-0 modal-backdrop z-[75] flex items-center justify-center p-4">
+        <div class="modern-card modal-content-animated p-6 md:p-8 max-w-lg w-full max-h-[95vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div class="text-center mb-5">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-3xl mx-auto flex items-center justify-center text-3xl mb-3 shadow-inner">
+                    🎉
                 </div>
-                <h3 class="text-xl font-bold text-gray-800">ยืนยันเบอร์โทรศัพท์</h3>
+                <h3 class="text-2xl font-extrabold text-slate-900">ลงทะเบียนจองสำเร็จ!</h3>
+                <p class="text-xs md:text-sm text-slate-500 mt-1">กรุณาบันทึกรหัสการจอง และโอนเงินตามยอดที่ระบุด้านล่าง</p>
             </div>
 
-            <p class="text-gray-600 mb-4">
-                เพื่อความปลอดภัย กรุณากรอก <strong>เบอร์โทรศัพท์</strong> ที่ท่านระบุไว้<br>
-                เพื่อยืนยันว่าท่านเป็นเจ้าของข้อมูล
-            </p>
+            <!-- Booking ID Card -->
+            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 mb-4 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">รหัสการจอง (Booking ID)</span>
+                    <p id="successBookingId" class="text-xl font-mono font-extrabold text-indigo-700 tracking-wider mt-0.5">CPD2026-XXXX</p>
+                </div>
+                <button onclick="copyBookingId()" class="bg-white hover:bg-slate-50 text-indigo-600 border border-indigo-200 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-2xs flex items-center gap-1 transition-all">
+                    <span>📋</span> คัดลอก
+                </button>
+            </div>
+
+            <!-- Amount to Pay -->
+            <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 mb-5 text-center">
+                <span class="text-xs text-emerald-700 font-semibold">ยอดเงินที่ต้องชำระทั้งสิ้น</span>
+                <p class="text-3xl font-extrabold text-emerald-700 mt-0.5"><span id="successTotalAmount">0</span> <span class="text-sm font-bold">บาท</span></p>
+            </div>
+
+            <!-- Bank Transfer Details -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-5 space-y-3">
+                <div class="flex items-center gap-3">
+                    <img src="https://krungthai.com/dist/resources/images/about-ktb/logo-krungthai.png"
+                        alt="Krungthai Bank" class="w-12 h-12 object-contain bg-white rounded-xl p-1 border border-slate-100">
+                    <div class="flex-1">
+                        <p class="text-xs font-semibold text-slate-500">ธนาคารกรุงไทย</p>
+                        <div class="flex items-center justify-between">
+                            <p class="text-lg font-bold text-blue-700 font-mono tracking-wider">218-0-73086-1</p>
+                            <button onclick="copyBankAccount()" class="text-xs text-blue-600 hover:text-blue-800 font-medium">คัดลอก</button>
+                        </div>
+                        <p class="text-xs text-slate-600 font-medium mt-0.5">ชื่อบัญชี: วันสหกรณ์แห่งชาติจังหวัดระยอง</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-2.5">
+                <button onclick="proceedToUploadFromSuccess()"
+                    class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white py-3.5 px-4 rounded-xl font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                    <span>📤</span> แนบหลักฐานการโอนเงินทันที
+                </button>
+                <button onclick="closeOrderSuccessModal()"
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-xl font-semibold text-xs transition-colors">
+                    โอนเงินภายหลัง (ปิดหน้านี้)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. INTERACTIVE SIZE GUIDE MODAL [NEW!] -->
+    <div id="sizeGuideModal" class="hidden fixed inset-0 modal-backdrop z-[70] flex items-center justify-center p-4">
+        <div class="modern-card modal-content-animated p-6 max-w-lg w-full shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <span>📏</span> ตารางขนาดไซส์เสื้อมาตรฐาน (รอบอก/ความยาว)
+                </h3>
+                <button onclick="closeSizeGuideModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-light">&times;</button>
+            </div>
+            <div class="overflow-hidden rounded-xl border border-slate-200 text-xs">
+                <table class="w-full text-center border-collapse">
+                    <thead class="bg-indigo-50 text-indigo-900 font-bold border-b border-indigo-100">
+                        <tr>
+                            <th class="p-2.5">ไซส์ (Size)</th>
+                            <th class="p-2.5">รอบอก (นิ้ว)</th>
+                            <th class="p-2.5">ความยาว (นิ้ว)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <tr><td class="p-2 font-bold">SS</td><td class="p-2">34"</td><td class="p-2">25"</td></tr>
+                        <tr class="bg-slate-50/50"><td class="p-2 font-bold">S</td><td class="p-2">36"</td><td class="p-2">26"</td></tr>
+                        <tr><td class="p-2 font-bold">M</td><td class="p-2">38"</td><td class="p-2">27"</td></tr>
+                        <tr class="bg-slate-50/50"><td class="p-2 font-bold">L</td><td class="p-2">40"</td><td class="p-2">28"</td></tr>
+                        <tr><td class="p-2 font-bold">XL</td><td class="p-2">42"</td><td class="p-2">29"</td></tr>
+                        <tr class="bg-slate-50/50"><td class="p-2 font-bold">2XL</td><td class="p-2">44"</td><td class="p-2">30"</td></tr>
+                        <tr><td class="p-2 font-bold">3XL</td><td class="p-2">46"</td><td class="p-2">31"</td></tr>
+                        <tr class="bg-slate-50/50"><td class="p-2 font-bold">4XL</td><td class="p-2">48"</td><td class="p-2">32"</td></tr>
+                        <tr><td class="p-2 font-bold">5XL</td><td class="p-2">50"</td><td class="p-2">33"</td></tr>
+                        <tr class="bg-slate-50/50"><td class="p-2 font-bold">6XL</td><td class="p-2">52"</td><td class="p-2">34"</td></tr>
+                        <tr><td class="p-2 font-bold">7XL</td><td class="p-2">54"</td><td class="p-2">35"</td></tr>
+                        <tr class="bg-purple-50 text-purple-900 font-semibold"><td class="p-2">พิเศษ</td><td class="p-2">สั่งตัดพิเศษ</td><td class="p-2">-</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 text-center">
+                <button onclick="closeSizeGuideModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-semibold text-xs transition-colors">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Security Modal (Verify Phone Number) -->
+    <div id="securityModal" class="hidden fixed inset-0 modal-backdrop z-[70] flex items-center justify-center p-4">
+        <div class="modern-card modal-content-animated p-6 w-full max-w-md shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-center text-2xl">
+                    🔒
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">ยืนยันเบอร์โทรศัพท์</h3>
+                    <p class="text-xs text-slate-500">กรุณากรอกเบอร์ที่ท่านระบุไว้ตอนจองเพื่อยืนยันตัวตน</p>
+                </div>
+            </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์</label>
-                    <input type="tel" id="verifyBookingPin" placeholder="กรอกเบอร์โทรศัพท์ 10 หลัก..." maxlength="10"
-                        class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">เบอร์โทรศัพท์ 10 หลัก</label>
+                    <input type="tel" id="verifyBookingPin" placeholder="เช่น 0812345678" maxlength="10"
+                        class="modern-input font-mono text-center text-lg tracking-wider"
                         oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                 </div>
 
-                <div class="flex gap-3">
+                <div class="flex gap-2.5">
                     <button onclick="closeSecurityModal()"
-                        class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium">
+                        class="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition-colors">
                         ยกเลิก
                     </button>
                     <button onclick="checkBookingPin()"
-                        class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+                        class="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm shadow-sm transition-colors">
                         ยืนยัน
                     </button>
                 </div>
@@ -665,248 +841,144 @@
         </div>
     </div>
 
-    <!-- Size Detail Modal -->
+    <!-- 4. Size Detail Modal (Quick View) -->
     <div id="sizeDetailModal" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">👕 รายละเอียดไซส์เสื้อ</h3>
+        <div class="modern-card modal-content-animated p-6 w-full max-w-sm shadow-2xl">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <span>👕</span> รายละเอียดไซส์เสื้อ
+                </h3>
                 <button onclick="document.getElementById('sizeDetailModal').classList.add('hidden')"
-                    class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    class="text-slate-400 hover:text-slate-600 text-2xl font-light">&times;</button>
             </div>
-            <div id="sizeDetailContent"></div>
+            <div id="sizeDetailContent" class="space-y-2 text-sm text-slate-700"></div>
         </div>
     </div>
 
-    <!-- Preview Modal -->
+    <!-- 5. Preview Modal (Before Submission) -->
     <div id="previewModal" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
-            <div class="bg-indigo-600 text-white px-6 py-4 rounded-t-lg">
-                <h3 class="text-xl font-bold">⚠️ ตรวจสอบข้อมูลก่อนยืนยัน</h3>
+        <div class="modern-card modal-content-animated max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div class="bg-gradient-to-r from-indigo-700 to-indigo-800 text-white px-6 py-4 rounded-t-2xl flex items-center justify-between">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <span>⚠️</span> ตรวจสอบข้อมูลก่อนยืนยันการจอง
+                </h3>
+                <button onclick="closePreview()" class="text-white/80 hover:text-white text-2xl">&times;</button>
             </div>
             <div class="p-6 space-y-4">
-                <div class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
-                    <p class="font-medium text-yellow-800">📌 กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนกดยืนยัน</p>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-800 font-medium">
+                    📌 กรุณาตรวจสอบชื่อสหกรณ์ สีทีม และจำนวนไซส์เสื้อให้ถูกต้องก่อนทำการบันทึก
                 </div>
-                <div id="previewContent" class="space-y-3"></div>
-                <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-                    <p class="text-xl font-bold text-blue-700">💰 ยอดรวมทั้งหมด: <span id="previewTotal">0</span> บาท
-                    </p>
+                <div id="previewContent" class="space-y-3 text-sm"></div>
+                <div class="bg-indigo-50/80 border border-indigo-100 rounded-xl p-4 flex items-center justify-between">
+                    <span class="text-sm font-semibold text-slate-600">ยอดรวมทั้งสิ้น</span>
+                    <span class="text-2xl font-extrabold text-indigo-700"><span id="previewTotal">0</span> <span class="text-sm font-bold">บาท</span></span>
                 </div>
             </div>
-            <div class="flex gap-3 px-6 pb-6">
+            <div class="flex gap-3 px-6 pb-6 pt-2">
                 <button onclick="closePreview()"
-                    class="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600">
-                    ยกเลิก
+                    class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 px-4 rounded-xl font-semibold text-sm transition-colors">
+                    กลับไปแก้ไข
                 </button>
                 <button onclick="confirmBooking()" id="confirmBtn"
-                    class="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700">
-                    ✅ ยืนยันการจอง
+                    class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl font-bold text-sm shadow-md transition-all">
+                    ✅ ยืนยันข้อมูลถูกต้อง
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg p-8 flex flex-col items-center">
-            <div class="spinner spinner-dark mb-4"></div>
-            <p class="text-gray-700 font-medium">กำลังประมวลผล...</p>
-        </div>
-    </div>
-
-    <!-- Admin Login Modal -->
-    <div id="adminLoginModal" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-80">
-            <h3 class="text-xl font-bold mb-4">เข้าสู่ระบบผู้ดูแล</h3>
-            <input type="password" id="adminPin" placeholder="รหัสผ่าน (PIN)"
-                class="w-full px-4 py-2 border rounded-lg mb-4">
-            <div class="flex gap-2">
-                <button onclick="document.getElementById('adminLoginModal').classList.add('hidden')"
-                    class="flex-1 bg-gray-300 py-2 rounded">ยกเลิก</button>
-                <button onclick="checkAdminPin()"
-                    class="flex-1 bg-indigo-600 text-white py-2 rounded">เข้าสู่ระบบ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Blocked Phone Modal -->
-    <div id="blockedPhoneModal" class="hidden fixed inset-0 modal-backdrop z-[60] flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="bg-red-100 p-3 rounded-full">
-                    <span class="text-3xl">🚫</span>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800">ไม่สามารถลงทะเบียนได้</h3>
-            </div>
-
-            <div class="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-4">
-                <p class="text-red-700 font-medium mb-2">⚠️ หมายเลขโทรศัพท์นี้ไม่สามารถใช้ลงทะเบียนได้</p>
-                <p class="text-gray-700">
-                    กรุณา <strong class="text-red-600">ติดต่อฝ่ายบริหาร</strong> เพื่อทำการจองเสื้อ
-                </p>
-            </div>
-
-            <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
-                <p class="font-semibold text-blue-800 mb-2">📞 ช่องทางติดต่อ:</p>
-                <p class="text-gray-700">สำนักงานสหกรณ์จังหวัดระยอง</p>
-                <p class="text-gray-700">โทร: 038-694106</p>
-            </div>
-
-            <button onclick="closeBlockedPhoneModal()"
-                class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition-colors">
-                ปิด
-            </button>
-        </div>
-    </div>
-
-    <!-- Image Gallery Modal -->
-    <div id="imageGalleryModal" class="hidden fixed inset-0 modal-backdrop z-[60] flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-            <!-- Header -->
-            <div class="flex justify-between items-center p-4 border-b">
-                <h3 class="text-xl font-bold">📷 หลักฐานการโอน</h3>
-                <button onclick="closeGallery()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-            </div>
-
-            <!-- Image Area -->
-            <div class="flex-1 overflow-hidden relative bg-black flex items-center justify-center p-4 min-h-[400px]">
-                <button onclick="prevImage()" id="prevBtn"
-                    class="absolute left-4 z-10 bg-white/20 text-white p-3 rounded-full hover:bg-white/40 transition hidden backdrop-blur-sm">
-                    ❮
-                </button>
-
-                <img id="galleryImage" referrerpolicy="no-referrer" src="" alt="Proof"
-                    class="max-w-full max-h-[70vh] object-contain shadow-lg rounded-lg">
-
-                <button onclick="nextImage()" id="nextBtn"
-                    class="absolute right-4 z-10 bg-white/20 text-white p-3 rounded-full hover:bg-white/40 transition hidden backdrop-blur-sm">
-                    ❯
-                </button>
-            </div>
-
-            <!-- Footer -->
-            <div class="p-4 border-t text-center text-gray-500">
-                รูปที่ <span id="currentImageIndex">0</span> / <span id="totalImages">0</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Message Modal (Custom Alert) -->
-    <div id="messageModal" class="hidden fixed inset-0 modal-backdrop z-[80] flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all scale-100">
-            <div class="text-center">
-                <div id="msgModalIcon"
-                    class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
-                    <span class="text-3xl">⚠️</span>
-                </div>
-                <h3 id="msgModalTitle" class="text-xl font-bold text-gray-900 mb-2">แจ้งเตือน</h3>
-                <p id="msgModalBody" class="text-gray-600 mb-6">ข้อความแจ้งเตือน</p>
-                <div class="flex justify-center gap-3">
-                    <button onclick="document.getElementById('messageModal').classList.add('hidden')"
-                        class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
-                        ตกลง
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Payment Detail Modal -->
+    <!-- 6. Payment Detail & Slip Modal -->
     <div id="paymentDetailModal" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="bg-indigo-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-                <h3 class="text-xl font-bold">💰 รายละเอียดการชำระเงิน</h3>
-                <button onclick="closePaymentModal()" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+        <div class="modern-card modal-content-animated max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div class="bg-gradient-to-r from-indigo-700 to-indigo-800 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <span>💰</span> รายละเอียดการชำระเงิน
+                </h3>
+                <button onclick="closePaymentModal()" class="text-white/80 hover:text-white text-2xl font-light">&times;</button>
             </div>
 
             <div class="p-6 space-y-6">
                 <!-- Payment Data -->
-                <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-                    <h3 class="font-bold text-lg mb-3">รายละเอียดการจอง</h3>
-                    <div id="modalPaymentDetails" class="space-y-2 text-gray-700"></div>
-                    <div class="mt-4 pt-4 border-t-2 border-blue-300">
-                        <p class="text-xl font-bold text-blue-700">ยอดรวมทั้งหมด: <span id="modalTotalPayment">0</span>
-                            บาท</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                    <div id="modalPaymentDetails" class="space-y-2 text-sm text-slate-700"></div>
+                    <div class="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
+                        <span class="text-sm font-semibold text-slate-600">ยอดรวมทั้งหมด</span>
+                        <span class="text-2xl font-extrabold text-indigo-700"><span id="modalTotalPayment">0</span> <span class="text-sm font-bold">บาท</span></span>
                     </div>
                 </div>
 
-                <!-- Upload Slip Section (User View) -->
-                <div id="uploadSection" class="space-y-3">
+                <!-- User Slip Upload Section -->
+                <div id="uploadSection" class="space-y-4">
                     <div class="flex gap-2">
                         <button id="editBookingBtn" onclick="startEditBooking()"
-                            class="hidden flex-1 bg-yellow-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-yellow-600 transition-colors">
-                            ✏️ แก้ไขข้อมูลการจอง
+                            class="hidden flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2.5 px-4 rounded-xl font-semibold text-xs shadow-sm transition-colors">
+                            ✏️ แก้ไขรายการจอง
                         </button>
                         <button id="cancelBookingBtn" onclick="startCancelBooking()"
-                            class="hidden flex-1 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors">
+                            class="hidden flex-1 bg-rose-500 hover:bg-rose-600 text-white py-2.5 px-4 rounded-xl font-semibold text-xs shadow-sm transition-colors">
                             ❌ ยกเลิกการจอง
                         </button>
                     </div>
 
-                    <!-- Bank Transfer Info -->
-                    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-300 rounded-lg p-4">
-                        <h4 class="font-bold text-lg text-blue-800 mb-3 flex items-center gap-2">
-                            🏦 ช่องทางการโอนเงิน
-                        </h4>
-                        <div class="flex items-center gap-4">
-                            <div class="flex-shrink-0">
-                                <img src="https://krungthai.com/dist/resources/images/about-ktb/logo-krungthai.png"
-                                    alt="Krungthai Bank" class="w-16 h-16 object-contain">
-                            </div>
+                    <!-- Bank Transfer Box -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50/50 border border-blue-200 rounded-2xl p-4">
+                        <div class="flex items-center gap-3.5">
+                            <img src="https://krungthai.com/dist/resources/images/about-ktb/logo-krungthai.png"
+                                alt="Krungthai Bank" class="w-12 h-12 object-contain bg-white rounded-xl p-1 border border-slate-100">
                             <div class="flex-1">
-                                <p class="text-sm text-gray-600">ธนาคารกรุงไทย</p>
-                                <p class="text-xl font-bold text-blue-700 tracking-wider">218-0-73086-1</p>
-                                <p class="text-sm font-medium text-gray-700">ชื่อบัญชี: วันสหกรณ์แห่งชาติจังหวัดระยอง
-                                </p>
+                                <p class="text-xs font-semibold text-slate-500">ธนาคารกรุงไทย</p>
+                                <p class="text-lg font-bold text-blue-700 font-mono tracking-wider">218-0-73086-1</p>
+                                <p class="text-xs text-slate-600 font-medium">ชื่อบัญชี: วันสหกรณ์แห่งชาติจังหวัดระยอง</p>
                             </div>
                         </div>
                     </div>
 
-                    <label class="block text-lg font-semibold text-gray-700">แนบหลักฐานการโอนเงิน</label>
-                    <p class="text-sm text-red-500 font-medium">* หากแนบสลิปแล้วจะไม่สามารถ <b>แก้ไขหรือยกเลิก</b>
-                        รายการที่ท่านจองได้ โปรดตรวจสอบก่อนทำการโอนเงิน</p>
-                    <input type="file" id="slipInput" accept="image/*" class="w-full px-3 py-2 border rounded-lg">
-                    <button id="uploadBtn" onclick="uploadSlip()"
-                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors mt-2">
-                        📤 อัพโหลดหลักฐาน
-                    </button>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">แนบหลักฐานการโอนเงิน (สลิป)</label>
+                        <p class="text-xs text-rose-500 mb-2.5">* หากแนบสลิปแล้วจะไม่สามารถแก้ไขหรือยกเลิกรายการได้ โปรดตรวจสอบก่อนส่ง</p>
+                        <input type="file" id="slipInput" accept="image/*"
+                            class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl p-1 bg-white">
+                        <button id="uploadBtn" onclick="uploadSlip()"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 px-6 rounded-xl font-bold text-sm shadow-md transition-all mt-3 flex items-center justify-center gap-2">
+                            <span>📤</span> อัปโหลดหลักฐานการโอน
+                        </button>
+                    </div>
                 </div>
 
-                <!-- View Slip Section (Admin View) -->
-                <div id="adminSlipSection" class="hidden space-y-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <label class="block text-sm font-medium text-gray-700">หลักฐานการโอน (สำหรับแอดมิน)</label>
-                    <div id="slipDisplay" class="text-sm text-gray-600"></div>
+                <!-- Admin Slip & Verification Section -->
+                <div id="adminSlipSection" class="hidden space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <label class="block text-xs font-bold text-slate-700">หลักฐานการโอนเงินที่แนบมา (Admin View)</label>
+                    <div id="slipDisplay" class="text-xs text-slate-600"></div>
 
-                    <!-- Admin Upload Section -->
-                    <div class="mt-3 pt-3 border-t border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">เพิ่มหลักฐานใหม่ (Admin)</label>
+                    <div class="mt-3 pt-3 border-t border-slate-200">
+                        <label class="block text-xs font-semibold text-slate-600 mb-2">อัปโหลดสลิปเพิ่มเติมโดย Admin</label>
                         <div class="flex items-center gap-2">
                             <input type="file" id="adminSlipInput" accept="image/*"
-                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors">
+                                class="block w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-slate-200 rounded-lg p-1">
                             <button onclick="uploadSlip('adminSlipInput', 'adminUploadBtn')" id="adminUploadBtn"
-                                class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center gap-2">
-                                📤 อัพโหลด
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-semibold shrink-0 transition-colors">
+                                อัปโหลด
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Payment Status Section (Admin Only) -->
+                <!-- Admin Status Update Section -->
                 <div id="adminStatusSection" class="hidden space-y-3">
-                    <label class="block text-lg font-semibold text-gray-700">จัดการสถานะ (Admin Only)</label>
-                    <div class="flex gap-3">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">ปรับปรุงสถานะการชำระ (Admin)</label>
+                    <div class="grid grid-cols-3 gap-2">
                         <button onclick="updatePaymentStatus('รอชำระ')"
-                            class="payment-status-btn flex-1 px-4 py-3 border-2 rounded-lg font-medium hover:bg-gray-50"
+                            class="payment-status-btn py-2.5 px-3 border border-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-50 transition-all text-center"
                             data-status="รอชำระ">⏳ รอชำระ</button>
                         <button onclick="updatePaymentStatus('รอตรวจสอบ')"
-                            class="payment-status-btn flex-1 px-4 py-3 border-2 rounded-lg font-medium hover:bg-gray-50"
+                            class="payment-status-btn py-2.5 px-3 border border-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-50 transition-all text-center"
                             data-status="รอตรวจสอบ">📤 รอตรวจสอบ</button>
                         <button onclick="updatePaymentStatus('ชำระแล้ว')"
-                            class="payment-status-btn flex-1 px-4 py-3 border-2 rounded-lg font-medium hover:bg-gray-50"
+                            class="payment-status-btn py-2.5 px-3 border border-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-50 transition-all text-center"
                             data-status="ชำระแล้ว">✅ ชำระแล้ว</button>
                     </div>
                     <button id="savePaymentBtn" onclick="savePaymentStatus()"
-                        class="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors">
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl font-bold text-xs shadow-sm transition-colors">
                         บันทึกสถานะ
                     </button>
                 </div>
@@ -914,38 +986,126 @@
         </div>
     </div>
 
-    <!-- Booking Closed Modal -->
-    <div id="bookingClosedModal"
-        class="hidden fixed inset-0 modal-backdrop z-[60] flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="bg-orange-100 p-3 rounded-full">
-                    <span class="text-3xl">🚫</span>
+    <!-- 7. Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl border border-slate-100">
+            <div class="spinner spinner-dark mb-4"></div>
+            <p class="text-slate-700 font-medium text-sm">กำลังประมวลผลข้อมูล...</p>
+        </div>
+    </div>
+
+    <!-- 8. Admin Login Modal -->
+    <div id="adminLoginModal" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
+        <div class="modern-card modal-content-animated p-6 w-full max-w-xs shadow-2xl">
+            <div class="text-center mb-4">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-2">
+                    🛡️
                 </div>
-                <h3 class="text-xl font-bold text-gray-800">ปิดรับจองแล้ว</h3>
+                <h3 class="text-lg font-bold text-slate-900">เข้าสู่ระบบ Admin</h3>
+                <p class="text-xs text-slate-500">กรุณากรอกรหัสผ่านผู้ดูแลระบบ</p>
             </div>
-
-            <div class="bg-orange-50 border-2 border-orange-200 rounded-lg p-4 mb-4">
-                <p class="text-orange-700 font-medium mb-2">⚠️ ขณะนี้ปิดทำการรับจองแล้ว</p>
-                <p class="text-gray-700">
-                    หากท่านต้องการจองเพิ่มเติม กรุณาติดต่อสำนักงานโดยตรง
-                </p>
+            <input type="password" id="adminPin" placeholder="รหัสผ่าน (PIN)"
+                class="modern-input text-center text-lg mb-4 font-mono">
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('adminLoginModal').classList.add('hidden')"
+                    class="flex-1 bg-slate-100 hover:bg-slate-200 py-2.5 rounded-xl text-xs font-medium text-slate-700 transition-colors">ยกเลิก</button>
+                <button onclick="checkAdminPin()"
+                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-xs font-bold shadow-sm transition-colors">เข้าสู่ระบบ</button>
             </div>
+        </div>
+    </div>
 
-            <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
-                <p class="font-semibold text-blue-800 mb-2">📞 ช่องทางติดต่อ:</p>
-                <p class="text-gray-700 font-medium">สำนักงานสหกรณ์จังหวัดระยอง</p>
-                <p class="text-2xl font-bold text-blue-700 mt-1">📱 038-694106</p>
+    <!-- 9. Image Gallery Modal -->
+    <div id="imageGalleryModal" class="hidden fixed inset-0 modal-backdrop z-[80] flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="flex justify-between items-center p-4 border-b border-slate-100">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <span>📷</span> หลักฐานการโอนเงิน
+                </h3>
+                <button onclick="closeGallery()" class="text-slate-400 hover:text-slate-600 text-2xl font-light">&times;</button>
             </div>
+            <div class="flex-1 overflow-hidden relative bg-slate-950 flex items-center justify-center p-4 min-h-[380px]">
+                <button onclick="prevImage()" id="prevBtn"
+                    class="absolute left-4 z-10 bg-white/20 text-white p-3 rounded-full hover:bg-white/40 transition hidden backdrop-blur-sm">❮</button>
+                <img id="galleryImage" referrerpolicy="no-referrer" src="" alt="Proof"
+                    class="max-w-full max-h-[65vh] object-contain rounded-lg shadow-md">
+                <button onclick="nextImage()" id="nextBtn"
+                    class="absolute right-4 z-10 bg-white/20 text-white p-3 rounded-full hover:bg-white/40 transition hidden backdrop-blur-sm">❯</button>
+            </div>
+            <div class="p-3 border-t border-slate-100 text-center text-xs text-slate-500">
+                รูปที่ <span id="currentImageIndex">0</span> / <span id="totalImages">0</span>
+            </div>
+        </div>
+    </div>
 
-            <button onclick="closeBookingClosedModal()"
-                class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition-colors">
-                ปิด
+    <!-- 10. Message Alert Modal -->
+    <div id="messageModal" class="hidden fixed inset-0 modal-backdrop z-[90] flex items-center justify-center p-4">
+        <div class="modern-card modal-content-animated p-6 w-full max-w-sm text-center shadow-2xl">
+            <div id="msgModalIcon" class="mx-auto flex items-center justify-center h-14 w-14 rounded-2xl bg-amber-100 mb-3 text-2xl">
+                ⚠️
+            </div>
+            <h3 id="msgModalTitle" class="text-lg font-bold text-slate-900 mb-1">แจ้งเตือน</h3>
+            <p id="msgModalBody" class="text-xs md:text-sm text-slate-600 mb-5 leading-relaxed"></p>
+            <button onclick="document.getElementById('messageModal').classList.add('hidden')"
+                class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-sm transition-colors">
+                ตกลง
             </button>
         </div>
     </div>
 
-    <!-- JavaScript Files -->
+    <!-- 11. Blocked Phone Modal -->
+    <div id="blockedPhoneModal" class="hidden fixed inset-0 modal-backdrop z-[70] flex items-center justify-center p-4">
+        <div class="modern-card modal-content-animated p-6 w-full max-w-md shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-center text-2xl">
+                    🚫
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">ไม่สามารถลงทะเบียนได้</h3>
+                    <p class="text-xs text-slate-500">หมายเลขโทรศัพท์นี้ถูกระงับการสั่งจอง</p>
+                </div>
+            </div>
+            <div class="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-4 text-xs text-rose-800 leading-relaxed">
+                กรุณาติดต่อเจ้าหน้าที่ฝ่ายประสานงานเพื่อตรวจสอบข้อมูลโดยตรง
+            </div>
+            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-4 text-xs space-y-1">
+                <p class="font-bold text-indigo-900">สำนักงานสหกรณ์จังหวัดระยอง</p>
+                <p class="text-indigo-700 font-semibold text-sm">โทร: 038-694106</p>
+            </div>
+            <button onclick="closeBlockedPhoneModal()"
+                class="w-full bg-slate-700 hover:bg-slate-800 text-white py-2.5 rounded-xl font-bold text-xs transition-colors">
+                ปิดหน้าต่าง
+            </button>
+        </div>
+    </div>
+
+    <!-- 12. Booking Closed Modal -->
+    <div id="bookingClosedModal" class="hidden fixed inset-0 modal-backdrop z-[70] flex items-center justify-center p-4">
+        <div class="modern-card modal-content-animated p-6 w-full max-w-md shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-center text-2xl">
+                    🚫
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">ปิดรับจองกิจกรรมแล้ว</h3>
+                    <p class="text-xs text-slate-500">ขณะนี้ระบบปิดรับการสั่งจองรอบนี้แล้ว</p>
+                </div>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-xs text-amber-800 leading-relaxed">
+                หากท่านต้องการจองเพิ่มเติม กรุณาติดต่อสำนักงานสหกรณ์จังหวัดระยองโดยตรง
+            </div>
+            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-4 text-xs space-y-1">
+                <p class="font-bold text-indigo-900">สำนักงานสหกรณ์จังหวัดระยอง</p>
+                <p class="text-indigo-700 font-semibold text-sm">โทร: 038-694106</p>
+            </div>
+            <button onclick="closeBookingClosedModal()"
+                class="w-full bg-slate-700 hover:bg-slate-800 text-white py-2.5 rounded-xl font-bold text-xs transition-colors">
+                ปิดหน้าต่าง
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="js/config.js"></script>
     <script src="js/api-client.js"></script>
     <script src="js/app.js"></script>

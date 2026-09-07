@@ -187,12 +187,15 @@ function checkAdminState() {
 function updateAdminUI() {
     const summaryTabBtn = document.getElementById('tab-summary');
     const settingsTabBtn = document.getElementById('tab-settings');
+    const adminIndicator = document.getElementById('adminStatusIndicator');
     if (isAdmin) {
         summaryTabBtn?.classList.remove('hidden');
         settingsTabBtn?.classList.remove('hidden');
+        adminIndicator?.classList.remove('hidden');
     } else {
         summaryTabBtn?.classList.add('hidden');
         settingsTabBtn?.classList.add('hidden');
+        adminIndicator?.classList.add('hidden');
         if (!document.getElementById('content-summary').classList.contains('hidden') || 
             !document.getElementById('content-settings').classList.contains('hidden')) {
             switchTab('booking');
@@ -206,9 +209,14 @@ function updateAdminUI() {
 
 function switchTab(tab) {
     document.querySelectorAll('[id^="content-"]').forEach(el => el.classList.add('hidden'));
-    document.getElementById('content-' + tab).classList.remove('hidden');
+    const targetContent = document.getElementById('content-' + tab);
+    if (targetContent) targetContent.classList.remove('hidden');
+
+    // Modern active tab styles
+    document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.remove('ring-4', 'ring-yellow-400'));
-    document.getElementById('tab-' + tab).classList.add('ring-4', 'ring-yellow-400');
+    const activeTab = document.getElementById('tab-' + tab);
+    if (activeTab) activeTab.classList.add('active');
     
     if (tab === 'booking') applyConfig();
     else if (tab === 'summary') updateSummaryTab();
@@ -234,56 +242,64 @@ function renderDynamicForm() {
     if (!container) return;
 
     if (!window.activeEvent) {
-        container.innerHTML = `<div class="text-center py-12 text-gray-500">🚫 ไม่พบกิจกรรมที่เปิดอยู่ในขณะนี้</div>`;
+        container.innerHTML = `<div class="text-center py-12 text-slate-400">🚫 ไม่พบกิจกรรมที่เปิดอยู่ในขณะนี้</div>`;
         document.getElementById('formActions').classList.add('hidden');
         return;
     }
 
     let html = `
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-2 drop-shadow-sm flex items-center gap-3">
-            <span class="text-indigo-600">📝</span> ลงทะเบียนจองกิจกรรม
-        </h2>
-        <p class="text-gray-500 mb-8 border-l-4 border-indigo-500 pl-4 py-1">กรุณากรอกข้อมูลให้ครบถ้วนเพื่อผลประโยชน์ของท่าน</p>
+        <div class="border-b border-slate-100 pb-4 mb-2">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+                <span class="text-indigo-600">📝</span> ลงทะเบียนจองกิจกรรม
+            </h2>
+            <p class="text-xs md:text-sm text-slate-500 mt-1">กรุณากรอกข้อมูลให้ครบถ้วนเพื่อผลประโยชน์ในการรับเสื้อและอุปกรณ์</p>
+        </div>
 
         <!-- Step 1: Coop Info -->
-        <div class="card p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <label class="block text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="bg-indigo-100 text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
-                ข้อมูลพื้นฐาน
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs hover:border-indigo-200 transition-colors">
+            <label class="block text-lg font-bold text-slate-800 mb-4 flex items-center gap-2.5">
+                <span class="step-badge">1</span>
+                ข้อมูลพื้นฐานสหกรณ์ / สังกัด
             </label>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-gray-600">ชื่อสหกรณ์ / สังกัด</label>
-                    <input type="text" id="coopName" placeholder="กรอกชื่อสหกรณ์"
-                        class="w-full px-5 py-3.5 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-all placeholder:text-gray-300">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">ชื่อสหกรณ์ / สังกัด <span class="text-rose-500">*</span></label>
+                    <input type="text" id="coopName" placeholder="เช่น สหกรณ์การเกษตรเมืองระยอง จำกัด"
+                        class="modern-input placeholder:text-slate-300">
                 </div>
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-gray-600">เบอร์โทรศัพท์มือถือที่ติดต่อได้</label>
-                    <input type="tel" id="bookingPin" placeholder="กรอกเบอร์โทรศัพท์ 10 หลัก (ไม่มีขีด -)"
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">เบอร์โทรศัพท์ติดต่อ (ใช้เป็น PIN) <span class="text-rose-500">*</span></label>
+                    <input type="tel" id="bookingPin" placeholder="เบอร์โทรศัพท์ 10 หลัก (ไม่มีขีด -)"
                         maxlength="10"
-                        class="w-full px-5 py-3.5 border-2 border-yellow-200 bg-yellow-50/30 rounded-xl focus:border-indigo-500 focus:outline-none transition-all font-mono"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                    <p class="text-xs text-amber-600 italic">* ใช้ยืนยันตัวตนเมื่อต้องการเข้าสู่ระบบสมาชิก</p>
+                        class="modern-input font-mono tracking-wider bg-amber-50/40 border-amber-200 focus:border-indigo-500"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhoneInput(this);">
+                    <div id="phoneHelperText" class="text-[11px] text-amber-700 flex items-center gap-1 mt-1">
+                        <span>🔒</span> ใช้ยืนยันตัวตนเมื่อต้องการแก้ไขหรือยกเลิกการจอง
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Step 2: Team Color -->
-        <div class="card p-6 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6">
-            <label class="block text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="bg-indigo-100 text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-                เลือกสีทีมกีฬา
-            </label>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">`;
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs hover:border-indigo-200 transition-colors mt-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <label class="block text-lg font-bold text-slate-800 flex items-center gap-2.5">
+                    <span class="step-badge">2</span>
+                    เลือกสีทีมกีฬาประจำกลุ่ม <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-xs text-slate-400">คลิกเลือก 1 สี</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">`;
 
     // Dynamic Colors
     window.availableColors.forEach(color => {
         html += `
-                <button onclick="selectColor('${color.id}')"
-                    class="color-btn p-4 rounded-2xl border-4 border-transparent hover:border-indigo-200 transition-all group relative overflow-hidden"
+                <button type="button" onclick="selectColor('${color.id}')"
+                    class="color-card-btn group"
                     data-color="${color.id}">
-                    <div class="w-full h-16 ${color.class || 'bg-gray-500'} rounded-xl mb-3 shadow-inner transform group-hover:scale-105 transition-transform"></div>
-                    <p class="font-bold text-center text-gray-700">${color.emoji || ''} ${color.name}</p>
+                    <div class="color-check-icon">✓</div>
+                    <div class="w-full h-14 ${color.class || 'bg-gray-500'} rounded-xl mb-2.5 shadow-inner transition-transform group-hover:scale-105"></div>
+                    <p class="font-bold text-center text-xs md:text-sm text-slate-700">${color.emoji || ''} ${color.name}</p>
                 </button>`;
     });
 
@@ -295,35 +311,44 @@ function renderDynamicForm() {
     window.availableActivities.forEach((act, index) => {
         const stepNum = index + 3;
         html += `
-        <div class="card p-6 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6 activity-section" data-activity-id="${act.id}" data-type="${act.type}">
-            <label class="block text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-                <span class="bg-indigo-100 text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">${stepNum}</span>
-                ${act.name}
-            </label>
-            <p class="text-sm text-gray-500 mb-6 bg-indigo-50 inline-block px-3 py-1 rounded-full border border-indigo-100">
-                🏷️ ราคาชิ้นละ <strong>${act.price.toLocaleString()}</strong> บาท
-            </p>`;
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs hover:border-indigo-200 transition-colors mt-6 activity-section" data-activity-id="${act.id}" data-type="${act.type}">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <label class="block text-lg font-bold text-slate-800 flex items-center gap-2.5">
+                    <span class="step-badge">${stepNum}</span>
+                    ${act.name}
+                </label>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
+                        🏷️ ราคาชิ้นละ <strong>${act.price.toLocaleString()}</strong> บาท
+                    </span>
+                    ${act.type === 'Sizeable' ? `
+                    <button type="button" onclick="openSizeGuideModal()"
+                        class="text-xs font-medium text-slate-600 hover:text-indigo-600 bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full transition-colors flex items-center gap-1">
+                        📏 ดูตารางรอบอก
+                    </button>` : ''}
+                </div>
+            </div>`;
 
         if (act.type === 'Sizeable') {
-            html += `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">`;
+            html += `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">`;
             act.options.forEach(option => {
                 html += `
-                    <div class="space-y-1.5 group">
+                    <div class="space-y-1 bg-slate-50/60 p-2.5 rounded-xl border border-slate-200/60 hover:border-indigo-200 transition-colors group text-center">
                         <div class="flex justify-between items-center px-1">
-                            <label class="block text-sm font-bold text-gray-700 group-hover:text-indigo-600 transition-colors uppercase">${option}</label>
-                            <button type="button" onclick="showSizeGuide('${act.id}', '${option}')" class="text-[10px] text-gray-400 hover:text-indigo-500 transition-colors">📏 Guide</button>
+                            <label class="block text-xs font-bold text-slate-700 group-hover:text-indigo-600 transition-colors uppercase">${option}</label>
+                            <button type="button" onclick="showSizeGuide('${act.id}', '${option}')" class="text-[10px] text-slate-400 hover:text-indigo-600">รอบอก</button>
                         </div>
                         <input type="number" data-option="${option}" min="0" placeholder="0"
-                            class="activity-input w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-all text-center font-bold">
+                            class="activity-input w-full px-2 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:outline-none transition-all text-center font-bold text-slate-800 text-base bg-white">
                     </div>`;
             });
             html += `</div>`;
         } else {
             html += `
                 <div class="max-w-xs">
-                    <input type="number" min="0" placeholder="ระบุจำนวนที่ต้องการ"
-                        class="activity-input w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-all font-bold text-lg">
-                    <p class="text-xs text-gray-400 mt-2 ml-1">* หากไม่ต้องการ ระบุเป็น 0 หรือปล่อยว่าง</p>
+                    <input type="number" min="0" placeholder="ระบุจำนวนที่ต้องการ (ชิ้น/พาน/โต๊ะ)"
+                        class="activity-input modern-input font-bold text-lg text-slate-800">
+                    <p class="text-xs text-slate-400 mt-1.5 ml-1">* หากไม่ต้องการสั่ง สามารถเว้นว่างหรือระบุ 0 ได้</p>
                 </div>`;
         }
         html += `</div>`;
@@ -332,18 +357,18 @@ function renderDynamicForm() {
     // Final Step: Sponsor
     const nextStep = (window.availableActivities.length || 0) + 3;
     html += `
-        <div class="card p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-sm border border-green-100 mt-6">
-            <label class="block text-xl font-bold text-green-800 mb-2 flex items-center gap-2">
-                <span class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">${nextStep}</span>
+        <div class="bg-gradient-to-br from-emerald-50/80 to-teal-50/80 rounded-2xl p-6 border border-emerald-200/80 shadow-xs mt-6">
+            <label class="block text-lg font-bold text-emerald-900 mb-1 flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">${nextStep}</span>
                 เงินสนับสนุนกิจกรรม (กองกลาง)
             </label>
-            <p class="text-sm text-green-700 mb-6 bg-white/50 inline-block px-3 py-1 rounded-full border border-green-200 italic">
-                * ระบุจำนวนเงินสำหรับสนับสนุนการจัดงาน (ตามความสมัครใจ)
+            <p class="text-xs text-emerald-700 mb-4 ml-10">
+                ร่วมสนับสนุนการจัดงานวันสหกรณ์แห่งชาติ (ตามความสมัครใจ)
             </p>
-            <div class="max-w-md relative group">
-                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-green-600 font-bold text-xl group-focus-within:scale-110 transition-transform">฿</span>
-                <input type="number" id="sponsorAmount" min="0" placeholder="ระบุจำนวนเงิน (บาท)"
-                    class="w-full pl-12 pr-6 py-4.5 border-2 border-green-200 rounded-2xl focus:border-green-600 focus:outline-none transition-all font-bold text-xl text-green-800">
+            <div class="max-w-md relative group ml-0 sm:ml-10">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600 font-bold text-lg">฿</span>
+                <input type="number" id="sponsorAmount" min="0" placeholder="ระบุจำนวนเงินสนับสนุน (บาท)"
+                    class="w-full pl-10 pr-4 py-3 border-2 border-emerald-200 rounded-xl focus:border-emerald-600 focus:outline-none transition-all font-bold text-lg text-emerald-900 bg-white">
             </div>
         </div>
     `;
@@ -353,7 +378,22 @@ function renderDynamicForm() {
 }
 
 /**
- * Placeholder for size guide - can be updated to fetch from Activities table later
+ * Validate phone number on input
+ */
+function validatePhoneInput(input) {
+    const helper = document.getElementById('phoneHelperText');
+    if (!helper) return;
+    if (input.value.length === 10) {
+        helper.innerHTML = '<span class="text-emerald-600 font-semibold">✓ เบอร์โทรศัพท์ครบ 10 หลักถูกต้อง</span>';
+    } else if (input.value.length > 0) {
+        helper.innerHTML = `<span class="text-amber-600">กรอกแล้ว ${input.value.length}/10 หลัก</span>`;
+    } else {
+        helper.innerHTML = '<span class="text-amber-700">🔒 ใช้ยืนยันตัวตนเมื่อต้องการแก้ไขหรือยกเลิกการจอง</span>';
+    }
+}
+
+/**
+ * Show size guide details
  */
 function showSizeGuide(activityId, option) {
     if (activityId !== 'SHIRT') return;
@@ -372,14 +412,30 @@ function showSizeGuide(activityId, option) {
         'Special': 'อก 63" / ยาว 25"'
     };
     const guide = guides[option] || 'ไม่พบข้อมูลไซส์';
-    document.getElementById('sizeDetailContent').innerHTML = `<div class="p-4 bg-indigo-50 rounded-xl border border-indigo-100 text-center"><p class="text-gray-500 mb-1">สัดส่วนไซส์ ${option}</p><p class="text-2xl font-bold text-indigo-700">${guide}</p></div>`;
+    document.getElementById('sizeDetailContent').innerHTML = `
+        <div class="p-5 bg-indigo-50 rounded-2xl border border-indigo-100 text-center">
+            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">สัดส่วนเสื้อไซส์ ${option}</p>
+            <p class="text-2xl font-extrabold text-indigo-700">${guide}</p>
+        </div>`;
     document.getElementById('sizeDetailModal').classList.remove('hidden');
+}
+
+function openSizeGuideModal() {
+    document.getElementById('sizeGuideModal')?.classList.remove('hidden');
+}
+
+function closeSizeGuideModal() {
+    document.getElementById('sizeGuideModal')?.classList.add('hidden');
 }
 
 function selectColor(color) {
     selectedColor = color;
+    document.querySelectorAll('.color-card-btn').forEach(btn => btn.classList.remove('selected'));
     document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-indigo-500', 'bg-indigo-50'));
-    document.querySelector(`[data-color="${color}"]`).classList.add('ring-4', 'ring-indigo-500', 'bg-indigo-50');
+    const targetCard = document.querySelector(`.color-card-btn[data-color="${color}"]`);
+    if (targetCard) targetCard.classList.add('selected');
+    const targetBtn = document.querySelector(`.color-btn[data-color="${color}"]`);
+    if (targetBtn) targetBtn.classList.add('ring-4', 'ring-indigo-500', 'bg-indigo-50');
 }
 
 // ===== Booking Form =====
@@ -495,6 +551,69 @@ function closePreview() {
     if (modal) modal.classList.add('hidden');
 }
 
+let lastCreatedBookingId = null;
+let lastCreatedBookingPin = null;
+
+function generateClientBookingId() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const yearBE = now.getFullYear() + 543;
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return day + month + yearBE + hours + minutes;
+}
+
+function openOrderSuccessModal(bookingId, totalAmount, pin) {
+    lastCreatedBookingId = bookingId;
+    lastCreatedBookingPin = pin;
+    const idEl = document.getElementById('successBookingId');
+    if (idEl) idEl.textContent = bookingId;
+    const totalEl = document.getElementById('successTotalAmount');
+    if (totalEl) totalEl.textContent = Number(totalAmount).toLocaleString();
+    const modal = document.getElementById('orderSuccessModal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeOrderSuccessModal() {
+    const modal = document.getElementById('orderSuccessModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function copyBookingId() {
+    const id = document.getElementById('successBookingId')?.textContent || lastCreatedBookingId;
+    if (id) {
+        navigator.clipboard.writeText(id).then(() => {
+            showToast('คัดลอกรหัสการจองแล้ว: ' + id, 'success');
+        }).catch(() => {
+            showToast('รหัสการจอง: ' + id, 'info');
+        });
+    }
+}
+
+function copyBankAccount() {
+    navigator.clipboard.writeText('2180730861').then(() => {
+        showToast('คัดลอกเลขบัญชี 218-0-73086-1 แล้ว', 'success');
+    }).catch(() => {
+        showToast('เลขบัญชี: 218-0-73086-1', 'info');
+    });
+}
+
+function proceedToUploadFromSuccess() {
+    closeOrderSuccessModal();
+    switchTab('payment');
+    if (lastCreatedBookingId) {
+        const searchInput = document.getElementById('paymentSearchInput');
+        if (searchInput) {
+            searchInput.value = lastCreatedBookingId;
+            filterPaymentTable(lastCreatedBookingId);
+        }
+        setTimeout(() => {
+            selectPaymentRow(lastCreatedBookingId);
+        }, 350);
+    }
+}
+
 async function confirmBooking() {
     const isBookingOpen = window.activeEvent && String(window.activeEvent.status || '').trim().toLowerCase() === 'open';
     if (!isBookingOpen) {
@@ -519,8 +638,10 @@ async function confirmBooking() {
     const color = window.availableColors.find(c => c.id === selectedColor);
     const colorNameText = color ? color.name : selectedColor;
 
+    const assignedId = editingBookingId || generateClientBookingId();
+
     const bookingData = {
-        id: editingBookingId || null, // Backend will generate if null
+        id: assignedId,
         event_id: window.activeEvent ? window.activeEvent.id : null,
         pin: bookingPin,
         coop_name: coopName,
@@ -534,13 +655,22 @@ async function confirmBooking() {
 
     try {
         let result = editingBookingId ? await ApiClient.updateBooking(bookingData) : await ApiClient.createBooking(bookingData);
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = originalContent;
+
         if (result.isOk) {
-            showToast(editingBookingId ? 'แก้ไขข้อมูลสำเร็จ!' : 'บันทึกข้อมูลสำเร็จ!', 'success');
-            closePreview(); resetForm(); updatePaymentTable(); init();
+            closePreview();
+            if (editingBookingId) {
+                showToast('แก้ไขข้อมูลสำเร็จ!', 'success');
+            } else {
+                showToast('บันทึกข้อมูลสำเร็จ!', 'success');
+                openOrderSuccessModal(assignedId, totalAmount, bookingPin);
+            }
+            resetForm();
+            updatePaymentTable();
+            init();
         } else { 
             showToast('เกิดข้อผิดพลาด: ' + result.error, 'error'); 
-            confirmBtn.disabled = false;
-            confirmBtn.innerHTML = originalContent;
         }
     } catch (error) {
         confirmBtn.disabled = false;
@@ -562,7 +692,10 @@ function resetForm() {
     document.getElementById('sponsorAmount').value = '';
     editingBookingId = null; selectedColor = '';
     isPhoneVerified = false;  // Reset phone verification when form is cleared
+    document.querySelectorAll('.color-card-btn').forEach(btn => btn.classList.remove('selected'));
     document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-indigo-500', 'bg-indigo-50'));
+    const phoneHelper = document.getElementById('phoneHelperText');
+    if (phoneHelper) phoneHelper.innerHTML = '<span class="text-amber-700">🔒 ใช้ยืนยันตัวตนเมื่อต้องการแก้ไขหรือยกเลิกการจอง</span>';
 }
 
 // ===== Booking Closed Modal =====
@@ -833,8 +966,22 @@ function updatePublicStatusTable() {
     const paginatedBookings = sortedBookings.slice((statusCurrentPage - 1) * CONFIG.ITEMS_PER_PAGE, statusCurrentPage * CONFIG.ITEMS_PER_PAGE);
     document.getElementById('statusPageInfo').textContent = `หน้า ${statusCurrentPage} จาก ${totalPages || 1}`; document.getElementById('statusPrevBtn').disabled = statusCurrentPage === 1; document.getElementById('statusNextBtn').disabled = statusCurrentPage >= totalPages;
     const paginationDiv = document.getElementById('statusPagination'); if (sortedBookings.length <= CONFIG.ITEMS_PER_PAGE) paginationDiv.classList.add('hidden'); else paginationDiv.classList.remove('hidden');
-    if (paginatedBookings.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">ไม่พบข้อมูล</td></tr>`; return; }
-    paginatedBookings.forEach(booking => { let statusColor = 'bg-yellow-100 text-yellow-700'; let statusIcon = '⏳'; if (booking.payment_status === 'ชำระแล้ว') { statusColor = 'bg-green-100 text-green-700'; statusIcon = '✅'; } else if (booking.payment_status === 'รอตรวจสอบ') { statusColor = 'bg-blue-100 text-blue-700'; statusIcon = '📤'; } const row = document.createElement('tr'); row.className = 'hover:bg-gray-50 border-b last:border-b-0'; row.innerHTML = `<td class="px-4 py-3 text-center text-gray-500 font-mono text-sm">${booking.id}</td><td class="px-4 py-3 text-center font-medium">${colorNameShort[booking.coop_color] || booking.coop_color}</td><td class="px-4 py-3 text-gray-800">${booking.coop_name}</td><td class="px-4 py-3 text-center"><span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${statusColor}">${statusIcon} ${booking.payment_status}</span></td>`; tbody.appendChild(row); });
+    if (paginatedBookings.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400 text-xs">ไม่พบข้อมูลการจองที่ค้นหา</td></tr>`; return; }
+    paginatedBookings.forEach(booking => { 
+        let statusClass = 'status-pending'; 
+        let statusIcon = '⏳'; 
+        if (booking.payment_status === 'ชำระแล้ว') { 
+            statusClass = 'status-paid'; 
+            statusIcon = '✅'; 
+        } else if (booking.payment_status === 'รอตรวจสอบ') { 
+            statusClass = 'status-reviewing'; 
+            statusIcon = '📤'; 
+        } 
+        const row = document.createElement('tr'); 
+        row.className = 'hover:bg-slate-50/80 border-b border-slate-100 last:border-b-0 transition-colors'; 
+        row.innerHTML = `<td class="p-3 text-center text-slate-500 font-mono text-xs">${booking.id}</td><td class="p-3 text-center font-medium text-xs">${colorNameShort[booking.coop_color] || booking.coop_color}</td><td class="p-3 text-slate-800 font-semibold text-xs md:text-sm">${booking.coop_name}</td><td class="p-3 text-center"><span class="status-badge ${statusClass}">${statusIcon} ${booking.payment_status}</span></td>`; 
+        tbody.appendChild(row); 
+    });
 }
 
 // ===== Summary Tab =====
