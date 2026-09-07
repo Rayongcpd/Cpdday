@@ -1319,6 +1319,18 @@ async function toggleDistributionStatus(id, isChecked) {
 }
 
 /**
+ * Return official Thai counting unit based on activity type or name
+ */
+function getActivityUnit(act) {
+    if (!act) return 'รายการ';
+    const name = act.name || '';
+    if (act.id === 'SHIRT' || name.includes('เสื้อ')) return 'ตัว';
+    if (act.id === 'FLOWER' || name.includes('พาน')) return 'พาน';
+    if (act.id === 'TABLE' || name.includes('โต๊ะ')) return 'โต๊ะ';
+    return 'รายการ';
+}
+
+/**
  * Generate PDF for a Single Cooperative Booking (Individual Copy)
  * Refactored to support Dynamic Activities and Relational Items
  */
@@ -1350,6 +1362,8 @@ async function generateCoopPDF(coopId) {
             grandTotal += (it.quantity * it.price);
         });
 
+        const unitName = getActivityUnit(act);
+
         if (act.type === 'Sizeable') {
             // Render as size-grid table (e.g. Shirts)
             const half = Math.ceil(act.options.length / 2);
@@ -1362,28 +1376,28 @@ async function generateCoopPDF(coopId) {
             }).join('');
 
             sizeableItemsHTML += `
-                <div style="margin-bottom: 10px; page-break-inside: avoid;">
-                    <div style="font-size: 12px; font-weight: bold; color: #1e293b; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #6366f1; padding-left: 8px;">
-                        <span>📦 ${act.name} (หน่วยละ ${act.price.toLocaleString()} บาท)</span>
-                        <span style="font-size: 11px; color: #64748b; font-weight: normal;">รวมยอด: ${actSubtotal.toLocaleString()} บาท</span>
+                <div style="margin-bottom: 12px; page-break-inside: avoid;">
+                    <div style="font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #6366f1; padding-left: 8px; line-height: 1.5;">
+                        <span>📦 ${act.name} (ราคา${unitName}ละ ${act.price.toLocaleString()} บาท)</span>
+                        <span style="font-size: 11px; color: #4f46e5; font-weight: 600;">รวมยอดเงิน: ${actSubtotal.toLocaleString()} บาท</span>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <div style="flex: 1;">
                             <table style="width: 100%; border-collapse: collapse;">
-                                <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1; font-size: 10px; color: #475569;">
-                                    <th style="padding: 3px 6px; text-align: left;">ตัวเลือก</th>
-                                    <th style="padding: 3px 6px; text-align: center; width: 45px;">จำนวน</th>
-                                    <th style="padding: 3px 6px; text-align: right; width: 55px;">บาท</th>
+                                <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1; font-size: 10px; color: #475569; line-height: 1.4;">
+                                    <th style="padding: 4px 6px; text-align: left;">ขนาด / ไซส์</th>
+                                    <th style="padding: 4px 6px; text-align: center; width: 45px;">จำนวน (${unitName})</th>
+                                    <th style="padding: 4px 6px; text-align: right; width: 60px;">เป็นเงิน (บาท)</th>
                                 </tr>
                                 ${renderCol(leftCol)}
                             </table>
                         </div>
                         <div style="flex: 1;">
                             <table style="width: 100%; border-collapse: collapse;">
-                                <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1; font-size: 10px; color: #475569;">
-                                    <th style="padding: 3px 6px; text-align: left;">ตัวเลือก</th>
-                                    <th style="padding: 3px 6px; text-align: center; width: 45px;">จำนวน</th>
-                                    <th style="padding: 3px 6px; text-align: right; width: 55px;">บาท</th>
+                                <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1; font-size: 10px; color: #475569; line-height: 1.4;">
+                                    <th style="padding: 4px 6px; text-align: left;">ขนาด / ไซส์</th>
+                                    <th style="padding: 4px 6px; text-align: center; width: 45px;">จำนวน (${unitName})</th>
+                                    <th style="padding: 4px 6px; text-align: right; width: 60px;">เป็นเงิน (บาท)</th>
                                 </tr>
                                 ${renderCol(rightCol)}
                             </table>
@@ -1394,10 +1408,10 @@ async function generateCoopPDF(coopId) {
             // Render as a standard item row (e.g. Flowers, Tables)
             const totalQty = items.reduce((sum, it) => sum + it.quantity, 0);
             standardItemsHTML += `
-                <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px;">
-                    <td style="padding: 4px 6px; font-weight: 500;">${act.name} (${act.price.toLocaleString()} บ.)</td>
-                    <td style="padding: 4px 6px; text-align: center; font-weight: 600;">${totalQty} หน่วย</td>
-                    <td style="padding: 4px 6px; text-align: right; font-weight: bold; color: #1e293b;">${actSubtotal.toLocaleString()}</td>
+                <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px; line-height: 1.5;">
+                    <td style="padding: 5px 6px; font-weight: 500;">${act.name} (${act.price.toLocaleString()} บาท/${unitName})</td>
+                    <td style="padding: 5px 6px; text-align: center; font-weight: 600;">${totalQty} ${unitName}</td>
+                    <td style="padding: 5px 6px; text-align: right; font-weight: 700; color: #1e293b;">${actSubtotal.toLocaleString()} บาท</td>
                 </tr>`;
         }
     });
@@ -1405,38 +1419,40 @@ async function generateCoopPDF(coopId) {
     // Add Sponsor Amount separately
     grandTotal += (booking.sponsor_amount || 0);
 
+    const eventDisplayName = (window.activeEvent && window.activeEvent.name) ? window.activeEvent.name : 'งานวันสหกรณ์แห่งชาติ ประจำปี 2569';
+
     const pdfContent = `
-        <div id="pdf-content" style="font-family: 'Kanit', sans-serif; color: #1e293b; padding: 18px 22px; background: #ffffff; width: 700px; box-sizing: border-box; margin: 0;">
+        <div id="pdf-content" style="font-family: 'Kanit', sans-serif; color: #1e293b; padding: 20px 24px; background: #ffffff; width: 700px; box-sizing: border-box; margin: 0; line-height: 1.5;">
             
             <!-- Header -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #22c55e; padding-bottom: 8px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #22c55e; padding-bottom: 8px; margin-bottom: 12px;">
                 <div>
-                    <h1 style="font-size: 18px; font-weight: 900; color: #0f172a; margin: 0; line-height: 1.2;">ใบสรุปการสั่งจองและลงทะเบียน</h1>
-                    <h2 style="font-size: 12px; font-weight: 500; color: #64748b; margin: 2px 0 0 0;">งานวันสหกรณ์แห่งชาติ ${window.activeEvent?.name || ''}</h2>
+                    <h1 style="font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.5;">ใบสรุปรายการสั่งจองและลงทะเบียน</h1>
+                    <h2 style="font-size: 12px; font-weight: 500; color: #64748b; margin: 2px 0 0 0; line-height: 1.4;">${eventDisplayName}</h2>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 10px; font-weight: 700; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 99px;">
+                    <div style="font-size: 10px; font-weight: 700; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 10px; border-radius: 99px;">
                         สำนักงานสหกรณ์จังหวัดระยอง
                     </div>
                 </div>
             </div>
 
             <!-- Coop Info Card -->
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px; margin-bottom: 10px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; line-height: 1.6;">
                 <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                     <tr>
-                        <td style="width: 70px; font-weight: 700; color: #64748b;">ชื่อสหกรณ์:</td>
-                        <td style="font-size: 15px; font-weight: 900; color: #0f172a;">${booking.coop_name}</td>
-                        <td style="width: 70px; font-weight: 700; color: #64748b; text-align: right;">ID การจอง:</td>
-                        <td style="width: 120px; font-family: monospace; font-weight: bold; text-align: right; color: #4f46e5; font-size: 12px;">#${booking.id}</td>
+                        <td style="width: 85px; font-weight: 600; color: #64748b;">ชื่อสหกรณ์:</td>
+                        <td style="font-size: 14px; font-weight: 700; color: #0f172a;">${booking.coop_name}</td>
+                        <td style="width: 85px; font-weight: 600; color: #64748b; text-align: right;">รหัสการจอง:</td>
+                        <td style="width: 120px; font-family: monospace; font-weight: 700; text-align: right; color: #4f46e5; font-size: 12px;">#${booking.id}</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: 700; color: #64748b; padding-top: 3px;">สีทีมกีฬา:</td>
-                        <td style="padding-top: 3px;">
-                            <span style="background-color: ${colorHex}; color: white; padding: 2px 8px; border-radius: 99px; font-weight: 700; font-size: 11px;">${colorName}</span>
+                        <td style="font-weight: 600; color: #64748b; padding-top: 4px;">สีประจำทีม:</td>
+                        <td style="padding-top: 4px;">
+                            <span style="background-color: ${colorHex}; color: white; padding: 2px 10px; border-radius: 99px; font-weight: 600; font-size: 11px;">${colorName}</span>
                         </td>
-                        <td style="font-weight: 700; color: #64748b; text-align: right; padding-top: 3px;">วันที่พิมพ์:</td>
-                        <td style="font-size: 11px; text-align: right; color: #64748b; padding-top: 3px;">${dateStr}</td>
+                        <td style="font-weight: 600; color: #64748b; text-align: right; padding-top: 4px;">วันที่ออกเอกสาร:</td>
+                        <td style="font-size: 11px; text-align: right; color: #64748b; padding-top: 4px;">${dateStr}</td>
                     </tr>
                 </table>
             </div>
@@ -1445,48 +1461,50 @@ async function generateCoopPDF(coopId) {
             ${sizeableItemsHTML}
 
             <!-- Other Items & Grand Total Side-by-Side -->
-            <div style="display: flex; gap: 12px; align-items: stretch; margin-top: 8px; margin-bottom: 10px;">
-                <div style="flex: 1.2; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;">
-                    <div style="font-size: 11px; font-weight: bold; color: #1e293b; margin-bottom: 4px; border-left: 3px solid #10b981; padding-left: 6px;">
+            <div style="display: flex; gap: 12px; align-items: stretch; margin-top: 8px; margin-bottom: 12px;">
+                <div style="flex: 1.2; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #1e293b; margin-bottom: 5px; border-left: 3px solid #10b981; padding-left: 6px; line-height: 1.4;">
                         🎁 รายการอื่นๆ และเงินสนับสนุน
                     </div>
                     <table style="width: 100%; border-collapse: collapse;">
-                        ${standardItemsHTML || '<tr><td colspan="3" style="padding: 4px 0; color: #94a3b8; font-size: 10px; text-align: center;">ไม่มีรายการเพิ่มเติม</td></tr>'}
+                        ${standardItemsHTML || '<tr><td colspan="3" style="padding: 5px 0; color: #94a3b8; font-size: 10px; text-align: center;">ไม่มีรายการเพิ่มเติม</td></tr>'}
                         ${booking.sponsor_amount > 0 ? `
-                        <tr style="border-top: 1px solid #e2e8f0; font-size: 11px;">
-                            <td style="padding: 4px 6px; color: #047857; font-weight: 600;">เงินสนับสนุนกิจกรรม</td>
-                            <td style="padding: 4px 6px; text-align: center; color: #64748b;">-</td>
-                            <td style="padding: 4px 6px; text-align: right; font-weight: bold; color: #059669;">+${booking.sponsor_amount.toLocaleString()}</td>
+                        <tr style="border-top: 1px solid #e2e8f0; font-size: 11px; line-height: 1.5;">
+                            <td style="padding: 5px 6px; color: #047857; font-weight: 600;">เงินสนับสนุนการจัดงาน</td>
+                            <td style="padding: 5px 6px; text-align: center; color: #64748b;">-</td>
+                            <td style="padding: 5px 6px; text-align: right; font-weight: 700; color: #059669;">+${booking.sponsor_amount.toLocaleString()} บาท</td>
                         </tr>` : ''}
                     </table>
                 </div>
 
-                <div style="flex: 0.8; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #22c55e; border-radius: 8px; padding: 10px 12px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                    <div style="font-size: 10px; font-weight: 800; color: #15803d; letter-spacing: 0.5px;">ยอดชำระสุทธิ</div>
-                    <div style="font-size: 24px; font-weight: 950; color: #166534; line-height: 1.1; margin: 3px 0;">${grandTotal.toLocaleString()} <span style="font-size: 12px; font-weight: 600;">บาท</span></div>
-                    <div style="font-size: 10px; font-weight: 600; color: #166534;">สถานะ: ${booking.payment_status}</div>
+                <div style="flex: 0.8; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #22c55e; border-radius: 8px; padding: 12px 14px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 11px; font-weight: 700; color: #15803d; line-height: 1.5;">ยอดชำระเงินสุทธิ</div>
+                    <div style="font-size: 26px; font-weight: 700; color: #166534; line-height: 1.3; margin: 4px 0;">${grandTotal.toLocaleString()} <span style="font-size: 13px; font-weight: 600;">บาท</span></div>
+                    <div style="font-size: 11px; font-weight: 600; color: #15803d; line-height: 1.4;">สถานะ: ${booking.payment_status || 'รอชำระเงิน'}</div>
                 </div>
             </div>
 
             <!-- Signatures Section -->
-            <div style="display: flex; justify-content: space-between; margin-top: 18px; padding: 0 15px; font-size: 10px; color: #475569;">
+            <div style="display: flex; justify-content: space-between; margin-top: 22px; padding: 0 15px; font-size: 11px; color: #475569; line-height: 1.6;">
                 <div style="text-align: center; width: 220px;">
-                    <div style="margin-bottom: 28px;">ลงชื่อ ..............................................................</div>
-                    <div>(..............................................................)</div>
-                    <div style="font-size: 9px; color: #94a3b8; margin-top: 2px;">ตัวแทนสหกรณ์ผู้สั่งจอง / ผู้รับมอบ</div>
+                    <div style="margin-bottom: 30px;">ลงชื่อ ..............................................................</div>
+                    <div>( .............................................................. )</div>
+                    <div style="font-size: 10px; color: #64748b; margin-top: 2px;">ผู้สั่งจอง / ตัวแทนสหกรณ์</div>
+                    <div style="font-size: 9px; color: #94a3b8; margin-top: 4px;">วันที่ ........ / ........ / ................</div>
                 </div>
                 <div style="text-align: center; width: 220px;">
-                    <div style="margin-bottom: 28px;">ลงชื่อ ..............................................................</div>
-                    <div>(..............................................................)</div>
-                    <div style="font-size: 9px; color: #94a3b8; margin-top: 2px;">เจ้าหน้าที่ผู้ตรวจสอบ / ผู้ส่งมอบ</div>
+                    <div style="margin-bottom: 30px;">ลงชื่อ ..............................................................</div>
+                    <div>( .............................................................. )</div>
+                    <div style="font-size: 10px; color: #64748b; margin-top: 2px;">เจ้าหน้าที่ผู้รับเงิน / ผู้ส่งมอบ</div>
+                    <div style="font-size: 9px; color: #94a3b8; margin-top: 4px;">วันที่ ........ / ........ / ................</div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 6px; display: flex; justify-content: space-between; font-size: 9px; color: #94a3b8;">
-                <div>สำนักงานสหกรณ์จังหวัดระยอง | ID: #${booking.id}</div>
-                <div>เอกสารนี้ออกโดยระบบอัตโนมัติ</div>
-                <div>พิมพ์เมื่อ: ${dateStr}</div>
+            <div style="margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; font-size: 9px; color: #94a3b8; line-height: 1.5;">
+                <div>สำนักงานสหกรณ์จังหวัดระยอง | เอกสารสรุปรายการอย่างเป็นทางการ</div>
+                <div>รหัสอ้างอิง: #${booking.id}</div>
+                <div>วันที่ออกเอกสาร: ${dateStr}</div>
             </div>
         </div>`;
 
@@ -1544,17 +1562,17 @@ async function generateCoopPDF(coopId) {
 function generateItemRowPDF(option, count, unitPrice) {
     if (!count || count === 0) {
         return `
-            <tr style="color: #94a3b8; font-size: 10px;">
-                <td style="padding: 3px 5px; border-bottom: 1px solid #f1f5f9;">${option}</td>
-                <td style="padding: 3px 5px; text-align: center; border-bottom: 1px solid #f1f5f9;">-</td>
-                <td style="padding: 3px 5px; text-align: right; border-bottom: 1px solid #f1f5f9;">-</td>
+            <tr style="color: #94a3b8; font-size: 11px; line-height: 1.5;">
+                <td style="padding: 4px 6px; border-bottom: 1px solid #f1f5f9;">${option}</td>
+                <td style="padding: 4px 6px; text-align: center; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 4px 6px; text-align: right; border-bottom: 1px solid #f1f5f9;">-</td>
             </tr>`;
     }
     return `
-        <tr style="color: #1e293b; background-color: #f8fafc; font-size: 10px;">
-            <td style="padding: 3px 5px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${option}</td>
-            <td style="padding: 3px 5px; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #4f46e5;">${count}</td>
-            <td style="padding: 3px 5px; text-align: right; border-bottom: 1px solid #e2e8f0; font-weight: 700;">${(count * unitPrice).toLocaleString()}</td>
+        <tr style="color: #1e293b; background-color: #f8fafc; font-size: 11px; line-height: 1.5;">
+            <td style="padding: 4px 6px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${option}</td>
+            <td style="padding: 4px 6px; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #4f46e5;">${count}</td>
+            <td style="padding: 4px 6px; text-align: right; border-bottom: 1px solid #e2e8f0; font-weight: 700;">${(count * unitPrice).toLocaleString()}</td>
         </tr>`;
 }
 
@@ -1563,16 +1581,16 @@ function generateItemRowPDF(option, count, unitPrice) {
  */
 async function generateDetailedSummaryPDF(filterType = 'all') {
     let filtered = allBookings;
-    let label = '📊 รายงานสรุปยอดทั้งหมด';
+    let label = '📊 รายงานสรุปยอดการสั่งจองและกิจกรรม';
     let color = '#4f46e5';
 
     if (filterType === 'paid') {
         filtered = allBookings.filter(b => b.payment_status === 'ชำระแล้ว');
-        label = '✅ รายงานสรุปที่ชำระแล้ว';
+        label = '✅ รายงานสรุปยอดการสั่งจอง (ชำระเงินแล้ว)';
         color = '#16a34a';
     } else if (filterType === 'pending') {
         filtered = allBookings.filter(b => b.payment_status !== 'ชำระแล้ว');
-        label = '⏳ รายงานสรุปที่รอชำระ';
+        label = '⏳ รายงานสรุปยอดการสั่งจอง (รอชำระเงิน)';
         color = '#d97706';
     }
 
@@ -1611,10 +1629,11 @@ async function generateDetailedSummaryPDF(filterType = 'all') {
     window.availableActivities.forEach(act => {
         const summ = activitySummaries[act.id];
         if (summ.totalQty === 0) return;
+        const unitName = getActivityUnit(act);
 
         if (act.type === 'Sizeable') {
             const colorHeaders = window.availableColors.map(c => `
-                <th style="padding: 8px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 11px;">
+                <th style="padding: 6px 8px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 11px;">
                     ${c.name}
                 </th>`).join('');
             
@@ -1622,28 +1641,28 @@ async function generateDetailedSummaryPDF(filterType = 'all') {
                 const optData = summ.options[opt];
                 if (!optData || optData.total === 0) return '';
                 const colorCells = window.availableColors.map(c => `
-                    <td style="padding: 8px; border: 1px solid #e2e8f0; text-align: center; font-weight: 500;">
+                    <td style="padding: 6px 8px; border: 1px solid #e2e8f0; text-align: center; font-weight: 500;">
                         ${optData[c.id] || '-'}
                     </td>`).join('');
                 return `
-                    <tr>
-                        <td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: 700; background: #f8fafc;">${opt}</td>
+                    <tr style="line-height: 1.5;">
+                        <td style="padding: 6px 8px; border: 1px solid #e2e8f0; font-weight: 600; background: #f8fafc;">${opt}</td>
                         ${colorCells}
-                        <td style="padding: 8px; border: 1px solid #e2e8f0; text-align: center; font-weight: 900; background: #f1f5f9;">${optData.total}</td>
+                        <td style="padding: 6px 8px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; background: #f1f5f9;">${optData.total}</td>
                     </tr>`;
             }).join('');
 
             sectionsHTML += `
-                <div style="margin-bottom: 30px; page-break-inside: avoid;">
-                    <div style="font-size: 15px; font-weight: bold; color: #1e293b; margin-bottom: 12px; border-left: 5px solid #6366f1; padding-left: 12px;">
-                        📦 สรุปยอด: ${act.name} (รวมทั้งหมด ${summ.totalQty} หน่วย)
+                <div style="margin-bottom: 20px; page-break-inside: avoid;">
+                    <div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 8px; border-left: 4px solid #6366f1; padding-left: 10px; line-height: 1.5;">
+                        📦 สรุปยอด: ${act.name} (รวมทั้งหมด ${summ.totalQty} ${unitName})
                     </div>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: center;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: center;">
                         <thead>
-                            <tr style="background: #f1f5f9;">
-                                <th style="padding: 10px; border: 1px solid #e2e8f0; text-align: left; width: 100px;">ตัวเลือก/ไซส์</th>
+                            <tr style="background: #f1f5f9; line-height: 1.4;">
+                                <th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left; width: 100px;">ขนาด / ไซส์</th>
                                 ${colorHeaders}
-                                <th style="padding: 10px; border: 1px solid #e2e8f0; background: #1e293b; color: white; width: 70px;">รวม</th>
+                                <th style="padding: 8px; border: 1px solid #e2e8f0; background: #1e293b; color: white; width: 70px;">รวม (${unitName})</th>
                             </tr>
                         </thead>
                         <tbody>${rowsHTML}</tbody>
@@ -1651,26 +1670,28 @@ async function generateDetailedSummaryPDF(filterType = 'all') {
                 </div>`;
         } else {
             sectionsHTML += `
-                <div style="margin-bottom: 20px; page-break-inside: avoid; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="font-size: 16px; font-weight: 800; color: #334155;">🎁 ${act.name}</div>
+                <div style="margin-bottom: 14px; page-break-inside: avoid; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; line-height: 1.5;">
+                    <div style="font-size: 14px; font-weight: 700; color: #334155;">🎁 ${act.name}</div>
                     <div style="text-align: right;">
-                        <div style="font-size: 20px; font-weight: 950; color: #0f172a;">${summ.totalQty} <span style="font-size: 12px; font-weight: 500; color: #64748b;">หน่วย</span></div>
-                        <div style="font-size: 12px; font-weight: 700; color: #10b981;">รวมเป็นเงิน ${summ.totalRevenue.toLocaleString()} บ.</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #0f172a;">${summ.totalQty} <span style="font-size: 12px; font-weight: 500; color: #64748b;">${unitName}</span></div>
+                        <div style="font-size: 11px; font-weight: 600; color: #10b981;">รวมเป็นเงิน ${summ.totalRevenue.toLocaleString()} บาท</div>
                     </div>
                 </div>`;
         }
     });
 
+    const eventDisplayName = (window.activeEvent && window.activeEvent.name) ? window.activeEvent.name : 'งานวันสหกรณ์แห่งชาติ ประจำปี 2569';
+
     const pdfContent = `
-        <div id="pdf-summary-content" style="font-family: 'Kanit', sans-serif; width: 700px; padding: 22px 26px; background: white; color: #1e293b; box-sizing: border-box;">
-            <div style="text-align: center; border-bottom: 3px solid #22c55e; padding-bottom: 14px; margin-bottom: 20px;">
-                <h1 style="font-size: 22px; font-weight: 900; color: #111827; margin: 0;">${label}</h1>
-                <p style="font-size: 13px; color: #64748b; margin-top: 6px;">${window.activeEvent?.name || ''}</p>
-                <div style="font-size: 11px; color: #94a3b8; font-family: monospace; margin-top: 4px;">พิมพ์เมื่อ: ${dateTimeStr}</div>
+        <div id="pdf-summary-content" style="font-family: 'Kanit', sans-serif; width: 700px; padding: 22px 26px; background: white; color: #1e293b; box-sizing: border-box; line-height: 1.5;">
+            <div style="text-align: center; border-bottom: 3px solid #22c55e; padding-bottom: 14px; margin-bottom: 18px;">
+                <h1 style="font-size: 20px; font-weight: 700; color: #111827; margin: 0; line-height: 1.5;">${label}</h1>
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px; line-height: 1.4;">${eventDisplayName}</p>
+                <div style="font-size: 10px; color: #94a3b8; font-family: monospace; margin-top: 4px;">วันที่ออกรายงาน: ${dateTimeStr}</div>
             </div>
             ${sectionsHTML}
-            <div style="margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 12px; font-size: 10px; color: #94a3b8; text-align: right;">
-                สำนักงานสหกรณ์จังหวัดระยอง | จองออนไลน์ 24 ชม.
+            <div style="margin-top: 22px; border-top: 1px solid #e2e8f0; padding-top: 10px; font-size: 10px; color: #94a3b8; text-align: right;">
+                สำนักงานสหกรณ์จังหวัดระยอง | ระบบบริหารจัดการงานวันสหกรณ์แห่งชาติ
             </div>
         </div>`;
 
