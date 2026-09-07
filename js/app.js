@@ -107,7 +107,6 @@ function showToast(message, type = 'info') {
     const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
     toast.innerHTML = `${icon} ${message}`;
     document.body.appendChild(toast);
-    document.body.appendChild(toast);
     setTimeout(() => { toast.classList.add('toast-exit'); setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
@@ -487,6 +486,11 @@ async function previewBooking() {
     document.getElementById('previewContent').innerHTML = previewHTML;
     document.getElementById('previewTotal').textContent = totalCost.toLocaleString();
     document.getElementById('previewModal').classList.remove('hidden');
+}
+
+function closePreview() {
+    const modal = document.getElementById('previewModal');
+    if (modal) modal.classList.add('hidden');
 }
 
 async function confirmBooking() {
@@ -934,7 +938,16 @@ function updateSummaryTab() {
     tbody.innerHTML = '';
     
     let filtered = allBookings; 
-    if (summarySearchQuery) filtered = allBookings.filter(b => matchSearchQuery(b, summarySearchQuery));
+    if (startDate || endDate) {
+        filtered = filtered.filter(b => {
+            const bDate = parseBookingDate(b.id);
+            if (!bDate) return false;
+            if (startDate && bDate < startDate) return false;
+            if (endDate && bDate > endDate) return false;
+            return true;
+        });
+    }
+    if (summarySearchQuery) filtered = filtered.filter(b => matchSearchQuery(b, summarySearchQuery));
     
     const statusOrder = { 'รอชำระ': 1, 'รอตรวจสอบ': 2, 'ชำระแล้ว': 3 };
     filtered.sort((a, b) => {
@@ -1063,8 +1076,11 @@ function updateShirtSummary() {
         if (booking.items) {
             booking.items.forEach(it => {
                 if (it.activity_id === 'SHIRT' && colorResults[booking.coop_color]) {
-                    colorResults[booking.coop_color].options[it.option] += it.quantity;
-                    colorResults[booking.coop_color].total += it.quantity;
+                    if (colorResults[booking.coop_color].options[it.option] === undefined) {
+                        colorResults[booking.coop_color].options[it.option] = 0;
+                    }
+                    colorResults[booking.coop_color].options[it.option] += (it.quantity || 0);
+                    colorResults[booking.coop_color].total += (it.quantity || 0);
                 }
             });
         }
@@ -1351,7 +1367,7 @@ function generateDetailedSummaryPDF(filterType = 'all') {
             name: act.name, type: act.type, price: act.price, 
             totalQty: 0, totalRevenue: 0, options: {} 
         };
-        act.options.forEach(opt => {
+        (act.options || []).forEach(opt => {
             activitySummaries[act.id].options[opt] = { total: 0 };
             window.availableColors.forEach(col => {
                 activitySummaries[act.id].options[opt][col.id] = 0;
@@ -1387,9 +1403,9 @@ function generateDetailedSummaryPDF(filterType = 'all') {
                     ${c.name}
                 </th>`).join('');
             
-            const rowsHTML = act.options.map(opt => {
+            const rowsHTML = (act.options || []).map(opt => {
                 const optData = summ.options[opt];
-                if (optData.total === 0) return '';
+                if (!optData || optData.total === 0) return '';
                 const colorCells = window.availableColors.map(c => `
                     <td style="padding: 8px; border: 1px solid #e2e8f0; text-align: center; font-weight: 500;">
                         ${optData[c.id] || '-'}
